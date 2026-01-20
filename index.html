@@ -8,6 +8,143 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
   <style>
+    /* Splash Screen Styles */
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.8s ease;
+    }
+
+    .splash-content {
+      text-align: center;
+      color: white;
+      max-width: 500px;
+      padding: 2rem;
+    }
+
+    .splash-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .logo-icon-large {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      color: white;
+      box-shadow: 0 20px 40px rgba(37, 99, 235, 0.3);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    .logo-text {
+      font-family: 'Poppins', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+    }
+
+    .splash-tagline {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    .progress-bar {
+      width: 300px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      margin: 2rem auto;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #60a5fa, #3b82f6);
+      width: 0%;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+
+    .splash-features {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    .feature-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s ease forwards;
+    }
+
+    .feature-item:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .feature-item:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+
+    .feature-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #3b82f6;
+    }
+
+    .feature-text {
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Main Styles */
     :root {
       --primary: #2563eb;
       --primary-light: #3b82f6;
@@ -34,6 +171,12 @@
       align-items: center;
       background: #f8fafc;
       overflow-x: hidden;
+      opacity: 0;
+      animation: fadeIn 0.5s ease forwards 0.3s;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
     }
 
     .container {
@@ -44,10 +187,18 @@
       overflow: hidden;
       background-color: #fff;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-      transform: translateY(0);
-      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      transform: translateY(20px);
+      opacity: 0;
+      animation: slideUp 0.5s ease forwards 0.5s;
       position: relative;
       z-index: 1;
+    }
+
+    @keyframes slideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .container:hover {
@@ -387,6 +538,21 @@
       .form-title {
         font-size: 24px;
       }
+
+      .splash-logo .logo-text {
+        font-size: 2.5rem;
+      }
+
+      .logo-icon-large {
+        width: 80px;
+        height: 80px;
+        font-size: 2.5rem;
+      }
+
+      .splash-features {
+        flex-direction: column;
+        gap: 20px;
+      }
     }
 
     /* Particles background */
@@ -438,6 +604,47 @@
   </style>
 </head>
 <body>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div class="splash-content">
+      <div class="splash-logo">
+        <div class="logo-icon-large">
+          <i class="fas fa-stethoscope"></i>
+        </div>
+        <div class="logo-text">Parcimic</div>
+      </div>
+      
+      <div class="splash-tagline">
+        Advanced AI-powered health checkup with PulseAI
+      </div>
+      
+      <div class="progress-bar">
+        <div class="progress-fill" id="splash-progress"></div>
+      </div>
+      
+      <div class="splash-features">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-brain"></i>
+          </div>
+          <div class="feature-text">AI Medical Assistant</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-map-marked-alt"></i>
+          </div>
+          <div class="feature-text">Emergency Mapping</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="feature-text">Secure & Private</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Floating background shapes -->
   <div class="floating-shape shape-1"></div>
   <div class="floating-shape shape-2"></div>
@@ -455,7 +662,7 @@
 
     <div class="auth-container">
       <div class="logo">
-        <img src="Grooveat_logo.jpeg" alt="Parcimic Logo">
+        <img src="logo.png" alt="Parcimic Logo">
         <span>Parcimic</span>
       </div>
 
@@ -580,7 +787,8 @@
             uid: user.uid,
             name: user.displayName || '',
             email: user.email || '',
-            photoURL: user.photoURL || ''
+            photoURL: user.photoURL || '',
+            timestamp: Date.now()
           }));
           
           // Send welcome email
@@ -590,9 +798,9 @@
           
           showMessage('success', 'Authentication successful! Redirecting...');
           
-          // Redirect to dashboard after 2 seconds
+          // Redirect to home.html after 2 seconds
           setTimeout(() => {
-            window.location.href = 'dashboard.html';
+            window.location.href = 'home.html';
           }, 2000);
         })
         .catch(error => {
@@ -633,13 +841,58 @@
       }
     }
     
+    // Handle splash screen animation
+    function showSplashScreen() {
+      const splashScreen = document.getElementById('splash-screen');
+      const progressFill = document.getElementById('splash-progress');
+      const splashShown = localStorage.getItem('splash_shown');
+      
+      // Show splash only on first visit
+      if (!splashShown) {
+        let progress = 0;
+        
+        const interval = setInterval(() => {
+          progress += Math.random() * 20;
+          if (progress > 100) {
+            progress = 100;
+            clearInterval(interval);
+            
+            // Hide splash screen with animation
+            setTimeout(() => {
+              splashScreen.style.opacity = '0';
+              
+              setTimeout(() => {
+                splashScreen.style.display = 'none';
+                localStorage.setItem('splash_shown', 'true');
+              }, 800);
+            }, 300);
+          }
+          progressFill.style.width = `${progress}%`;
+        }, 200);
+      } else {
+        splashScreen.style.display = 'none';
+      }
+    }
+    
     // Initialize the page
     window.onload = function() {
       createParticles();
+      showSplashScreen();
       
       // Check if user is already logged in
-      if (localStorage.getItem('parcimic_user')) {
-        window.location.href = 'dashboard.html';
+      const userData = localStorage.getItem('parcimic_user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        const currentTime = Date.now();
+        const oneHour = 60 * 60 * 1000;
+        
+        // Check if login is still valid (within 1 hour)
+        if (currentTime - user.timestamp < oneHour) {
+          window.location.href = 'home.html';
+        } else {
+          // Clear expired login
+          localStorage.removeItem('parcimic_user');
+        }
       }
     };
   </script>

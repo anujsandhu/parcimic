@@ -1,0 +1,9 @@
+# macOS junk
+.DS_Store
+._*
+.AppleDouble
+.Trashes
+
+# folders you don’t want
+version 2/
+parcimic/
