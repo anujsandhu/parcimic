@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedAI | Symptom Checker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: var(--gray);
+            border-radius: 4px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .step-counter {
+            text-align: center;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        /* Step Containers */
+        .step-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .step-container.active {
+            display: block;
+        }
+        
+        /* Question Cards */
+        .question-card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .question-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .question-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .question-subtitle {
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Option Cards */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .option-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            border: 2px solid var(--gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+        }
+        
+        .option-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .option-card.selected {
+            border-color: var(--primary);
+            background: var(--light);
+            box-shadow: var(--shadow);
+        }
+        
+        .option-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray);
+        }
+        
+        .btn-back {
+            background: var(--light);
+            color: var(--dark);
+        }
+        
+        .btn-back:hover {
+            background: var(--gray);
+        }
+        
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Results Page */
+        .results-page {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .severity-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            margin: 2rem 0;
+            font-weight: 600;
+        }
+        
+        .severity-low {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 2px solid var(--success);
+        }
+        
+        .severity-moderate {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 2px solid var(--warning);
+        }
+        
+        .severity-high {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+        
+        .action-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary);
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        
+        /* Animation for step transitions */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .step-container {
+            animation: slideIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-stethoscope"></i>
+                MedAI
+            </a>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="first-aid.html" class="nav-link"><i class="fas fa-first-aid"></i> First Aid</a></li>
+                <li><a href="emergency.html" class="nav-link"><i class="fas fa-ambulance"></i> Emergency</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="symptom-checker">
+        <div class="container">
+            <!-- Progress Bar -->
+            <div class="step-counter">Step <span id="currentStep">1</span> of <span id="totalSteps">5</span></div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <!-- Step 1: Main Symptoms -->
+            <div class="step-container active" id="step1">
+                <div class="question-card">
+                    <div class="question-icon">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                    <h1 class="question-title">What are you experiencing?</h1>
+                    <p class="question-subtitle">Select all that apply to you right now</p>
+                    
+                    <div class="options-grid">
+                        <div class="option-card" data-symptom="fever">
+                            <div class="option-icon">
+                                <i class="fas fa-thermometer-half"></i>
+                            </div>
+                            <h3>Fever & Chills</h3>
+                            <p>Elevated temperature, feeling hot or cold</p>
+                        </div>
+                        
+                        <div class="option-card" data-symptom="headache">
+                            <div class="option-icon">
+                                <i class="fas fa-head-side-virus"></i>
+                            </div>
+                            <h3>Headache</h3>
+                            <p>Head pain, pressure, or discomfort</p>
+                        </div>
+                        
+                        <div class="option-card" data-symptom="cough">
+                            <div class="option-icon">
+                                <i class="fas fa-lungs"></i>
+                            </div>
+                            <h3>Cough & Cold</h3>
+                            <p>Coughing, sneezing, runny nose</p>
+                        </div>
+                        
+                        <div class="option-card" data-symptom="stomach">
+                            <div class="option-icon">
+                                <i class="fas fa-stomach"></i>
+                            </div>
+                            <h3>Stomach Issues</h3>
+                            <p>Nausea, vomiting, diarrhea</p>
+                        </div>
+                        
+                        <div class="option-card" data-symptom="fatigue">
+                            <div class="option-icon">
+                                <i class="fas fa-tired"></i>
+                            </div>
+                            <h3>Fatigue</h3>
+                            <p>Tiredness, weakness, low energy</p>
+                        </div>
+                        
+                        <div class="option-card" data-symptom="pain">
+                            <div class="option-icon">
+                                <i class="fas fa-pain"></i>
+                            </div>
+                            <h3>Body Pain</h3>
+                            <p>Muscle aches, joint pain, soreness</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary btn-back" disabled>
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="btn btn-primary btn-next" id="nextStep1">
+                        Continue <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Severity & Duration -->
+            <div class="step-container" id="step2">
+                <div class="question-card">
+                    <div class="question-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h1 class="question-title">How long have you had these symptoms?</h1>
+                    <p class="question-subtitle">This helps us understand the urgency</p>
+                    
+                    <div class="options-grid">
+                        <div class="option-card" data-duration="today">
+                            <div class="option-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <h3>Today Only</h3>
+                            <p>Symptoms started today</p>
+                        </div>
+                        
+                        <div class="option-card" data-duration="few_days">
+                            <div class="option-icon">
+                                <i class="fas fa-calendar-week"></i>
+                            </div>
+                            <h3>Few Days</h3>
+                            <p>1-3 days of symptoms</p>
+                        </div>
+                        
+                        <div class="option-card" data-duration="week">
+                            <div class="option-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <h3>About a Week</h3>
+                            <p>4-7 days of symptoms</p>
+                        </div>
+                        
+                        <div class="option-card" data-duration="longer">
+                            <div class="option-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3>More than Week</h3>
+                            <p>Over 7 days of symptoms</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary btn-back" id="backStep2">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="btn btn-primary btn-next" id="nextStep2" disabled>
+                        Continue <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Specific Symptoms -->
+            <div class="step-container" id="step3">
+                <div class="question-card">
+                    <div class="question-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h1 class="question-title">Any specific symptoms?</h1>
+                    <p class="question-subtitle">Select additional symptoms you're experiencing</p>
+                    
+                    <div class="options-grid">
+                        <div class="option-card" data-specific="sore_throat">
+                            <div class="option-icon">
+                                <i class="fas fa-microphone-alt-slash"></i>
+                            </div>
+                            <h3>Sore Throat</h3>
+                            <p>Pain or irritation in throat</p>
+                        </div>
+                        
+                        <div class="option-card" data-specific="shortness_breath">
+                            <div class="option-icon">
+                                <i class="fas fa-wind"></i>
+                            </div>
+                            <h3>Shortness of Breath</h3>
+                            <p>Difficulty breathing normally</p>
+                        </div>
+                        
+                        <div class="option-card" data-specific="chest_pain">
+                            <div class="option-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <h3>Chest Pain</h3>
+                            <p>Pain or discomfort in chest area</p>
+                        </div>
+                        
+                        <div class="option-card" data-specific="loss_smell">
+                            <div class="option-icon">
+                                <i class="fas fa-smile"></i>
+                            </div>
+                            <h3>Loss of Smell/Taste</h3>
+                            <p>Reduced sense of smell or taste</p>
+                        </div>
+                        
+                        <div class="option-card" data-specific="dizziness">
+                            <div class="option-icon">
+                                <i class="fas fa-dizzy"></i>
+                            </div>
+                            <h3>Dizziness</h3>
+                            <p>Feeling lightheaded or unsteady</p>
+                        </div>
+                        
+                        <div class="option-card" data-specific="none">
+                            <div class="option-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <h3>None of these</h3>
+                            <p>No additional specific symptoms</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary btn-back" id="backStep3">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="btn btn-primary btn-next" id="nextStep3" disabled>
+                        Continue <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Age & Medical History -->
+            <div class="step-container" id="step4">
+                <div class="question-card">
+                    <div class="question-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h1 class="question-title">Your health background</h1>
+                    <p class="question-subtitle">This helps provide appropriate guidance</p>
+                    
+                    <div class="options-grid">
+                        <div class="option-card" data-age="under_18">
+                            <div class="option-icon">
+                                <i class="fas fa-child"></i>
+                            </div>
+                            <h3>Under 18</h3>
+                            <p>Child or teenager</p>
+                        </div>
+                        
+                        <div class="option-card" data-age="18_40">
+                            <div class="option-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3>18-40 years</h3>
+                            <p>Young adult</p>
+                        </div>
+                        
+                        <div class="option-card" data-age="40_plus">
+                            <div class="option-icon">
+                                <i class="fas fa-user-friends"></i>
+                            </div>
+                            <h3>40+ years</h3>
+                            <p>Adult</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <h3 style="margin-bottom: 1rem;">Any existing medical conditions?</h3>
+                        <div class="options-grid">
+                            <div class="option-card" data-condition="none">
+                                <div class="option-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <h3>None</h3>
+                                <p>No existing conditions</p>
+                            </div>
+                            
+                            <div class="option-card" data-condition="asthma">
+                                <div class="option-icon">
+                                    <i class="fas fa-lungs"></i>
+                                </div>
+                                <h3>Asthma</h3>
+                                <p>Breathing/respiratory condition</p>
+                            </div>
+                            
+                            <div class="option-card" data-condition="diabetes">
+                                <div class="option-icon">
+                                    <i class="fas fa-syringe"></i>
+                                </div>
+                                <h3>Diabetes</h3>
+                                <p>Blood sugar condition</p>
+                            </div>
+                            
+                            <div class="option-card" data-condition="heart">
+                                <div class="option-icon">
+                                    <i class="fas fa-heartbeat"></i>
+                                </div>
+                                <h3>Heart Condition</h3>
+                                <p>Cardiovascular issues</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary btn-back" id="backStep4">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="btn btn-primary btn-next" id="nextStep4" disabled>
+                        Continue <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 5: Review & Results -->
+            <div class="step-container" id="step5">
+                <div class="results-page">
+                    <div class="question-icon" style="font-size: 4rem;">
+                        <i class="fas fa-file-medical-alt"></i>
+                    </div>
+                    <h1 class="question-title">Symptom Analysis Complete</h1>
+                    <p class="question-subtitle">Based on your responses, here's our guidance</p>
+                    
+                    <!-- Results will be dynamically inserted here -->
+                    <div id="resultsContent">
+                        <div class="severity-indicator severity-low" id="severityDisplay">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Low Severity</span>
+                        </div>
+                        
+                        <h2 id="conditionTitle" style="margin: 1.5rem 0;">Common Cold / Flu</h2>
+                        
+                        <div class="action-card">
+                            <h3><i class="fas fa-home" style="color: var(--success);"></i> Self-Care Recommendations</h3>
+                            <ul id="selfCareList" style="margin: 1rem 0; padding-left: 1.5rem;">
+                                <li>Rest and get plenty of sleep</li>
+                                <li>Drink fluids to stay hydrated</li>
+                                <li>Use over-the-counter medications as needed</li>
+                                <li>Monitor your temperature regularly</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="action-card">
+                            <h3><i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> When to Seek Medical Help</h3>
+                            <ul id="warningList" style="margin: 1rem 0; padding-left: 1.5rem;">
+                                <li>If fever persists beyond 3 days</li>
+                                <li>If symptoms worsen or don't improve</li>
+                                <li>If you have difficulty breathing</li>
+                                <li>If you experience severe pain</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="action-card">
+                            <h3><i class="fas fa-user-md" style="color: var(--primary);"></i> Professional Care Options</h3>
+                            <div style="margin: 1rem 0;">
+                                <p><strong>📞 Campus Health Center:</strong> (555) 123-4567</p>
+                                <p><strong>🏥 Telemedicine:</strong> Available 24/7 through student portal</p>
+                                <p><strong>📋 Urgent Care:</strong> Open until 9 PM daily</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 2rem 0;">
+                        <button class="btn btn-primary" id="restartChecker">
+                            <i class="fas fa-redo"></i> Start New Check
+                        </button>
+                        <button class="btn btn-secondary" id="printResults">
+                            <i class="fas fa-print"></i> Print Results
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 MedAI. Educational project only. For emergencies, call 911 or your local emergency number.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Symptom Checker Step-by-Step Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuration
+            const totalSteps = 5;
+            let currentStep = 1;
+            let userResponses = {
+                symptoms: [],
+                duration: '',
+                specificSymptoms: [],
+                age: '',
+                conditions: []
+            };
+
+            // Initialize
+            updateProgress();
+            setupEventListeners();
+
+            function updateProgress() {
+                // Update step counter
+                document.getElementById('currentStep').textContent = currentStep;
+                document.getElementById('totalSteps').textContent = totalSteps;
+                
+                // Update progress bar
+                const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+                document.getElementById('progressBar').style.width = `${progressPercentage}%`;
+            }
+
+            function setupEventListeners() {
+                // Step 1: Main Symptoms
+                setupOptionCards('step1', 'symptoms', true);
+                document.getElementById('nextStep1').addEventListener('click', () => nextStep(2));
+                
+                // Step 2: Duration
+                setupOptionCards('step2', 'duration', false);
+                document.getElementById('backStep2').addEventListener('click', () => prevStep(1));
+                document.getElementById('nextStep2').addEventListener('click', () => nextStep(3));
+                
+                // Step 3: Specific Symptoms
+                setupOptionCards('step3', 'specificSymptoms', true);
+                document.getElementById('backStep3').addEventListener('click', () => prevStep(2));
+                document.getElementById('nextStep3').addEventListener('click', () => nextStep(4));
+                
+                // Step 4: Age & Conditions
+                setupAgeAndConditions();
+                document.getElementById('backStep4').addEventListener('click', () => prevStep(3));
+                document.getElementById('nextStep4').addEventListener('click', generateResults);
+                
+                // Step 5: Results
+                document.getElementById('restartChecker').addEventListener('click', restartChecker);
+                document.getElementById('printResults').addEventListener('click', printResults);
+            }
+
+            function setupOptionCards(stepId, responseKey, multiple) {
+                const optionCards = document.querySelectorAll(`#${stepId} .option-card`);
+                
+                optionCards.forEach(card => {
+                    card.addEventListener('click', function() {
+                        const value = this.getAttribute(`data-${responseKey.split(/(?=[A-Z])/)[0].toLowerCase()}`);
+                        
+                        if (multiple) {
+                            // Multiple selection
+                            if (this.classList.contains('selected')) {
+                                this.classList.remove('selected');
+                                const index = userResponses[responseKey].indexOf(value);
+                                if (index > -1) {
+                                    userResponses[responseKey].splice(index, 1);
+                                }
+                            } else {
+                                this.classList.add('selected');
+                                userResponses[responseKey].push(value);
+                            }
+                            
+                            // Handle "none" selection
+                            if (value === 'none') {
+                                // Deselect all other cards
+                                optionCards.forEach(c => {
+                                    if (c !== this && c.classList.contains('selected')) {
+                                        c.classList.remove('selected');
+                                        const otherValue = c.getAttribute(`data-${responseKey.split(/(?=[A-Z])/)[0].toLowerCase()}`);
+                                        const index = userResponses[responseKey].indexOf(otherValue);
+                                        if (index > -1) {
+                                            userResponses[responseKey].splice(index, 1);
+                                        }
+                                    }
+                                });
+                            } else {
+                                // Deselect "none" if other options are selected
+                                const noneCard = document.querySelector(`#${stepId} .option-card[data-${responseKey.split(/(?=[A-Z])/)[0].toLowerCase()}="none"]`);
+                                if (noneCard && noneCard.classList.contains('selected')) {
+                                    noneCard.classList.remove('selected');
+                                    const index = userResponses[responseKey].indexOf('none');
+                                    if (index > -1) {
+                                        userResponses[responseKey].splice(index, 1);
+                                    }
+                                }
+                            }
+                            
+                            // Enable/disable next button
+                            const nextButton = document.querySelector(`#${stepId} .btn-next`);
+                            if (nextButton) {
+                                nextButton.disabled = userResponses[responseKey].length === 0;
+                            }
+                        } else {
+                            // Single selection
+                            optionCards.forEach(c => c.classList.remove('selected'));
+                            this.classList.add('selected');
+                            userResponses[responseKey] = value;
+                            
+                            // Enable next button
+                            const nextButton = document.querySelector(`#${stepId} .btn-next`);
+                            if (nextButton) {
+                                nextButton.disabled = false;
+                            }
+                        }
+                        
+                        console.log('User responses:', userResponses);
+                    });
+                });
+            }
+
+            function setupAgeAndConditions() {
+                // Age selection (single)
+                const ageCards = document.querySelectorAll('#step4 .option-card[data-age]');
+                ageCards.forEach(card => {
+                    card.addEventListener('click', function() {
+                        ageCards.forEach(c => c.classList.remove('selected'));
+                        this.classList.add('selected');
+                        userResponses.age = this.getAttribute('data-age');
+                        checkStep4Completion();
+                    });
+                });
+                
+                // Conditions selection (multiple)
+                const conditionCards = document.querySelectorAll('#step4 .option-card[data-condition]');
+                conditionCards.forEach(card => {
+                    card.addEventListener('click', function() {
+                        const value = this.getAttribute('data-condition');
+                        
+                        if (this.classList.contains('selected')) {
+                            this.classList.remove('selected');
+                            const index = userResponses.conditions.indexOf(value);
+                            if (index > -1) {
+                                userResponses.conditions.splice(index, 1);
+                            }
+                        } else {
+                            this.classList.add('selected');
+                            userResponses.conditions.push(value);
+                        }
+                        
+                        // Handle "none" selection
+                        if (value === 'none') {
+                            conditionCards.forEach(c => {
+                                if (c !== this && c.classList.contains('selected')) {
+                                    c.classList.remove('selected');
+                                    const otherValue = c.getAttribute('data-condition');
+                                    const index = userResponses.conditions.indexOf(otherValue);
+                                    if (index > -1) {
+                                        userResponses.conditions.splice(index, 1);
+                                    }
+                                }
+                            });
+                        } else {
+                            const noneCard = document.querySelector('#step4 .option-card[data-condition="none"]');
+                            if (noneCard && noneCard.classList.contains('selected')) {
+                                noneCard.classList.remove('selected');
+                                const index = userResponses.conditions.indexOf('none');
+                                if (index > -1) {
+                                    userResponses.conditions.splice(index, 1);
+                                }
+                            }
+                        }
+                        
+                        checkStep4Completion();
+                    });
+                });
+            }
+
+            function checkStep4Completion() {
+                const nextButton = document.getElementById('nextStep4');
+                if (userResponses.age && userResponses.conditions.length > 0) {
+                    nextButton.disabled = false;
+                } else {
+                    nextButton.disabled = true;
+                }
+            }
+
+            function nextStep(targetStep) {
+                // Hide current step
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                
+                // Show target step
+                currentStep = targetStep;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                
+                // Update progress
+                updateProgress();
+            }
+
+            function prevStep(targetStep) {
+                nextStep(targetStep);
+            }
+
+            function generateResults() {
+                // Analyze symptoms and generate results
+                const analysis = analyzeSymptoms();
+                
+                // Update UI with results
+                document.getElementById('severityDisplay').className = `severity-indicator severity-${analysis.severity}`;
+                document.getElementById('severityDisplay').innerHTML = `<i class="fas fa-${analysis.severity === 'high' ? 'exclamation-triangle' : analysis.severity === 'moderate' ? 'exclamation-circle' : 'info-circle'}"></i><span>${analysis.severityText}</span>`;
+                
+                document.getElementById('conditionTitle').textContent = analysis.condition;
+                
+                // Update self-care list
+                const selfCareList = document.getElementById('selfCareList');
+                selfCareList.innerHTML = '';
+                analysis.selfCare.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    selfCareList.appendChild(li);
+                });
+                
+                // Update warning list
+                const warningList = document.getElementById('warningList');
+                warningList.innerHTML = '';
+                analysis.warnings.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    warningList.appendChild(li);
+                });
+                
+                // Move to results step
+                nextStep(5);
+            }
+
+            function analyzeSymptoms() {
+                // Simple symptom analysis logic
+                const hasFever = userResponses.symptoms.includes('fever');
+                const hasCough = userResponses.symptoms.includes('cough');
+                const hasHeadache = userResponses.symptoms.includes('headache');
+                const hasChestPain = userResponses.specificSymptoms.includes('chest_pain');
+                const hasShortnessBreath = userResponses.specificSymptoms.includes('shortness_breath');
+                const duration = userResponses.duration;
+                const hasConditions = userResponses.conditions.length > 0 && !userResponses.conditions.includes('none');
+                
+                let severity = 'low';
+                let condition = 'Common Cold / Flu';
+                let selfCare = [];
+                let warnings = [];
+                
+                // Determine severity
+                if (hasChestPain || hasShortnessBreath) {
+                    severity = 'high';
+                    condition = 'Possible Serious Condition';
+                    selfCare = [
+                        'Seek immediate medical attention',
+                        'Do not attempt to drive yourself',
+                        'Call emergency services if needed',
+                        'Stay calm and rest while waiting for help'
+                    ];
+                    warnings = [
+                        'Chest pain or shortness of breath requires immediate evaluation',
+                        'Do not delay seeking medical help',
+                        'These could be signs of a serious condition'
+                    ];
+                } else if (hasFever && duration === 'longer') {
+                    severity = 'moderate';
+                    condition = 'Possible Infection';
+                    selfCare = [
+                        'Rest and stay hydrated',
+                        'Monitor temperature regularly',
+                        'Consider over-the-counter fever reducers',
+                        'Isolate if you suspect contagious illness'
+                    ];
+                    warnings = [
+                        'Fever lasting more than 3 days needs medical evaluation',
+                        'Watch for worsening symptoms',
+                        'Seek help if fever reaches 103°F (39.4°C)'
+                    ];
+                } else if (hasFever && hasCough) {
+                    severity = 'moderate';
+                    condition = 'Flu or Respiratory Infection';
+                    selfCare = [
+                        'Get plenty of rest',
+                        'Drink warm fluids like tea or soup',
+                        'Use humidifier for cough relief',
+                        'Consider over-the-counter cold medicine'
+                    ];
+                    warnings = [
+                        'If breathing becomes difficult, seek help immediately',
+                        'Watch for signs of dehydration',
+                        'If symptoms worsen after 3 days, see a doctor'
+                    ];
+                } else {
+                    severity = 'low';
+                    condition = 'Common Cold / Mild Illness';
+                    selfCare = [
+                        'Rest and get plenty of sleep',
+                        'Drink fluids to stay hydrated',
+                        'Use over-the-counter medications as needed',
+                        'Eat nutritious foods to support recovery'
+                    ];
+                    warnings = [
+                        'If fever persists beyond 3 days',
+                        'If symptoms worsen or don\'t improve',
+                        'If you develop new concerning symptoms'
+                    ];
+                }
+                
+                // Adjust for pre-existing conditions
+                if (hasConditions && severity === 'low') {
+                    severity = 'moderate';
+                    warnings.push('People with pre-existing conditions should be more cautious');
+                }
+                
+                return {
+                    severity: severity,
+                    severityText: severity.charAt(0).toUpperCase() + severity.slice(1) + ' Severity',
+                    condition: condition,
+                    selfCare: selfCare,
+                    warnings: warnings
+                };
+            }
+
+            function restartChecker() {
+                // Reset everything
+                currentStep = 1;
+                userResponses = {
+                    symptoms: [],
+                    duration: '',
+                    specificSymptoms: [],
+                    age: '',
+                    conditions: []
+                };
+                
+                // Remove selections
+                document.querySelectorAll('.option-card.selected').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                
+                // Reset buttons
+                document.querySelectorAll('.btn-next').forEach(btn => {
+                    btn.disabled = true;
+                });
+                
+                // Go back to step 1
+                document.querySelectorAll('.step-container').forEach(step => {
+                    step.classList.remove('active');
+                });
+                document.getElementById('step1').classList.add('active');
+                
+                // Update progress
+                updateProgress();
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function printResults() {
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>
