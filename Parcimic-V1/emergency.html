@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedAI | Emergency Help</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Emergency Page Specific Styles */
+        .emergency-header {
+            text-align: center;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(255, 255, 255, 0.1) 100%);
+            border-radius: var(--radius);
+            margin-bottom: 3rem;
+        }
+        
+        .emergency-alert {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--danger);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Emergency Grid Layout */
+        .emergency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .emergency-section {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease;
+        }
+        
+        .emergency-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .section-icon {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section-content {
+            padding: 2rem;
+        }
+        
+        /* Emergency Numbers */
+        .emergency-numbers {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .number-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: var(--radius);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .number-card:hover {
+            background: white;
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+        
+        .number-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .number-icon.critical {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .number-icon.urgent {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .number-icon.primary {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--primary);
+        }
+        
+        .number-details {
+            flex: 1;
+        }
+        
+        .number-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0.25rem 0;
+        }
+        
+        .number-description {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+        
+        .call-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .call-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+        
+        /* Emergency Actions */
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .action-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .action-card.danger {
+            border-top: 4px solid var(--danger);
+        }
+        
+        .action-card.warning {
+            border-top: 4px solid var(--warning);
+        }
+        
+        .action-card.success {
+            border-top: 4px solid var(--success);
+        }
+        
+        /* Emergency Checklist */
+        .checklist-container {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 4px solid var(--warning);
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+        }
+        
+        .checklist-item i {
+            color: var(--success);
+            font-size: 1.2rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* Location Section */
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .location-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .distance-badge {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Emergency Guide */
+        .guide-steps {
+            counter-reset: step-counter;
+            margin: 2rem 0;
+        }
+        
+        .guide-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .guide-step::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        /* Download Section */
+        .download-section {
+            background: linear-gradient(135deg, #DCFCE7 0%, #F0FDF4 100%);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            margin: 3rem 0;
+            border: 2px dashed var(--success);
+        }
+        
+        .download-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 2px solid var(--success);
+            color: var(--success);
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background: var(--success);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+        
+        @keyframes shake {
+            0%, 100% {transform: translateX(0);}
+            10%, 30%, 50%, 70%, 90% {transform: translateX(-5px);}
+            20%, 40%, 60%, 80% {transform: translateX(5px);}
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .emergency-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+            }
+            
+            .guide-step {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .guide-step::before {
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-stethoscope"></i>
+                MedAI
+            </a>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="symptom-checker.html" class="nav-link"><i class="fas fa-heartbeat"></i> Symptom Checker</a></li>
+                <li><a href="first-aid.html" class="nav-link"><i class="fas fa-first-aid"></i> First Aid</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="emergency">
+        <div class="container">
+            <!-- Emergency Header -->
+            <div class="emergency-header">
+                <div class="emergency-alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>LIFE-THREATENING EMERGENCY? CALL 911 IMMEDIATELY</span>
+                </div>
+                <h1>Emergency Medical Help</h1>
+                <p class="subtitle">Quick access to emergency services, healthcare facilities, and critical contacts</p>
+            </div>
+
+            <!-- Critical Emergency Section -->
+            <div class="emergency-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-ambulance"></i>
+                    </div>
+                    <div>
+                        <h2>Critical Emergency Numbers</h2>
+                        <p>Immediate response for life-threatening situations</p>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="emergency-numbers">
+                        <div class="number-card">
+                            <div class="number-icon critical">
+                                <i class="fas fa-ambulance"></i>
+                            </div>
+                            <div class="number-details">
+                                <div style="font-weight: 500; color: var(--danger);">EMERGENCY MEDICAL SERVICES</div>
+                                <div class="number-value">911</div>
+                                <div class="number-description">Police • Fire • Ambulance • Immediate life-threatening situations</div>
+                            </div>
+                            <button class="call-btn" data-number="911">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="number-card">
+                            <div class="number-icon critical">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div class="number-details">
+                                <div style="font-weight: 500; color: var(--danger);">NATIONAL POISON CONTROL</div>
+                                <div class="number-value">1-800-222-1222</div>
+                                <div class="number-description">24/7 poison exposure help • Medication overdose • Chemical exposure</div>
+                            </div>
+                            <button class="call-btn" data-number="1-800-222-1222">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="number-card">
+                            <div class="number-icon critical">
+                                <i class="fas fa-head-side-virus"></i>
+                            </div>
+                            <div class="number-details">
+                                <div style="font-weight: 500; color: var(--danger);">SUICIDE & CRISIS LIFELINE</div>
+                                <div class="number-value">988</div>
+                                <div class="number-description">24/7 mental health crisis support • Free and confidential</div>
+                            </div>
+                            <button class="call-btn" data-number="988">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Healthcare Facilities Grid -->
+            <div class="emergency-grid">
+                <!-- Campus Health Services -->
+                <div class="emergency-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-hospital-user"></i>
+                        </div>
+                        <div>
+                            <h3>Campus Health Services</h3>
+                            <p>Student healthcare on campus</p>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="emergency-numbers">
+                            <div class="number-card">
+                                <div class="number-icon primary">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">CAMPUS MEDICAL CENTER</div>
+                                    <div class="number-value">(555) 123-4567</div>
+                                    <div class="number-description">Mon-Fri 8AM-8PM • Sat 9AM-4PM • Student ID required</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 123-4567">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="number-card">
+                                <div class="number-icon primary">
+                                    <i class="fas fa-mental-health"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">STUDENT COUNSELING</div>
+                                    <div class="number-value">(555) 123-4568</div>
+                                    <div class="number-description">Mental health support • Stress management • Crisis counseling</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 123-4568">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="number-card">
+                                <div class="number-icon primary">
+                                    <i class="fas fa-prescription-bottle"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">CAMPUS PHARMACY</div>
+                                    <div class="number-value">(555) 123-4569</div>
+                                    <div class="number-description">Prescription filling • Over-the-counter meds • Student discounts</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 123-4569">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Local Hospitals -->
+                <div class="emergency-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-hospital-alt"></i>
+                        </div>
+                        <div>
+                            <h3>Local Hospitals</h3>
+                            <p>24/7 emergency departments</p>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="emergency-numbers">
+                            <div class="number-card">
+                                <div class="number-icon urgent">
+                                    <i class="fas fa-star-of-life"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">CITY GENERAL HOSPITAL</div>
+                                    <div class="number-value">(555) 987-6543</div>
+                                    <div class="number-description">Level 1 Trauma Center • 24/7 Emergency • All specialties</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 987-6543">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="number-card">
+                                <div class="number-icon urgent">
+                                    <i class="fas fa-baby"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">CHILDREN'S HOSPITAL</div>
+                                    <div class="number-value">(555) 987-6544</div>
+                                    <div class="number-description">Pediatric emergency • Specialized care for children</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 987-6544">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="number-card">
+                                <div class="number-icon urgent">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">CARDIAC CARE CENTER</div>
+                                    <div class="number-value">(555) 987-6545</div>
+                                    <div class="number-description">Cardiac emergencies • Heart attack • Stroke care</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 987-6545">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Specialized Services -->
+                <div class="emergency-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-hand-holding-medical"></i>
+                        </div>
+                        <div>
+                            <h3>Specialized Services</h3>
+                            <p>Specialized healthcare support</p>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="emergency-numbers">
+                            <div class="number-card">
+                                <div class="number-icon primary">
+                                    <i class="fas fa-teeth"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">DENTAL EMERGENCY</div>
+                                    <div class="number-value">(555) 234-5678</div>
+                                    <div class="number-description">Tooth pain • Dental trauma • 24/7 emergency dental care</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 234-5678">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="number-card">
+                                <div class="number-icon primary">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">OPHTHALMIC EMERGENCY</div>
+                                    <div class="number-value">(555) 234-5679</div>
+                                    <div class="number-description">Eye injuries • Sudden vision loss • Chemical eye exposure</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 234-5679">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="number-card">
+                                <div class="number-icon primary">
+                                    <i class="fas fa-allergies"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">ALLERGY & ASTHMA</div>
+                                    <div class="number-value">(555) 234-5680</div>
+                                    <div class="number-description">Severe allergic reactions • Asthma attacks • Breathing difficulties</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 234-5680">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Telemedicine & Virtual Care -->
+                <div class="emergency-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div>
+                            <h3>Telemedicine Services</h3>
+                            <p>Virtual healthcare options</p>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="emergency-numbers">
+                            <div class="number-card">
+                                <div class="number-icon primary">
+                                    <i class="fas fa-laptop-medical"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">UNIVERSITY TELEHEALTH</div>
+                                    <div class="number-value">(555) 345-6789</div>
+                                    <div class="number-description">Virtual doctor visits • Prescription refills • Free for students</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 345-6789">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="number-card">
+                                <div class="number-icon primary">
+                                    <i class="fas fa-stethoscope"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">24/7 VIRTUAL URGENT CARE</div>
+                                    <div class="number-value">(555) 345-6790</div>
+                                    <div class="number-description">Online consultations • Minor illness care • Available anytime</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 345-6790">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="number-card">
+                                <div class="number-icon primary">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="number-details">
+                                    <div style="font-weight: 500;">VIRTUAL MENTAL HEALTH</div>
+                                    <div class="number-value">(555) 345-6791</div>
+                                    <div class="number-description">Online therapy • Crisis chat • Mental health support</div>
+                                </div>
+                                <button class="call-btn" data-number="(555) 345-6791">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Action Guide -->
+            <div class="emergency-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-first-aid"></i>
+                    </div>
+                    <div>
+                        <h2>Emergency Action Guide</h2>
+                        <p>What to do in different emergency situations</p>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="action-cards">
+                        <div class="action-card danger">
+                            <div class="action-icon" style="color: var(--danger);">
+                                <i class="fas fa-heart-crack"></i>
+                            </div>
+                            <h3>Heart Attack</h3>
+                            <p>Chest pain, shortness of breath, sweating, nausea</p>
+                            <div style="margin-top: 1rem;">
+                                <span class="warning-badge">CALL 911</span>
+                                <span class="warning-badge">CHEW ASPIRIN</span>
+                                <span class="warning-badge">STAY CALM</span>
+                            </div>
+                        </div>
+                        
+                        <div class="action-card danger">
+                            <div class="action-icon" style="color: var(--danger);">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3>Stroke (FAST)</h3>
+                            <p>Face drooping, Arm weakness, Speech difficulty, Time to call 911</p>
+                            <div style="margin-top: 1rem;">
+                                <span class="warning-badge">FACE</span>
+                                <span class="warning-badge">ARMS</span>
+                                <span class="warning-badge">SPEECH</span>
+                                <span class="warning-badge">TIME</span>
+                            </div>
+                        </div>
+                        
+                        <div class="action-card warning">
+                            <div class="action-icon" style="color: var(--warning);">
+                                <i class="fas fa-allergies"></i>
+                            </div>
+                            <h3>Severe Allergic Reaction</h3>
+                            <p>Swelling, difficulty breathing, rash, dizziness</p>
+                            <div style="margin-top: 1rem;">
+                                <span class="warning-badge">USE EPIPEN</span>
+                                <span class="warning-badge">CALL 911</span>
+                                <span class="warning-badge">STAY WITH</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+            <!-- Emergency Preparation -->
+            <div class="emergency-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-kit-medical"></i>
+                    </div>
+                    <div>
+                        <h2>Emergency Preparation</h2>
+                        <p>Be prepared for medical emergencies</p>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="guide-steps">
+                        <div class="guide-step">
+                            <div>
+                                <h4>Create Emergency Contact List</h4>
+                                <p>Keep important numbers saved in your phone and written down</p>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <div>
+                                <h4>Know Your Medical Information</h4>
+                                <p>Have your allergies, medications, and medical conditions documented</p>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <div>
+                                <h4>Prepare a First Aid Kit</h4>
+                                <p>Keep basic medical supplies in your dorm room</p>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <div>
+                                <h4>Learn Basic First Aid</h4>
+                                <p>Take a campus first aid course or online certification</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download Resources -->
+            <div class="download-section">
+                <h3><i class="fas fa-download"></i> Emergency Resources</h3>
+                <p>Download these resources for quick access during emergencies</p>
+                
+                <div class="download-buttons">
+                    <a href="#" class="download-btn" id="downloadContacts">
+                        <i class="fas fa-address-book"></i> Emergency Contacts PDF
+                    </a>
+                    <a href="#" class="download-btn" id="downloadGuide">
+                        <i class="fas fa-file-medical"></i> First Aid Quick Guide
+                    </a>
+                    <a href="#" class="download-btn" id="downloadWallet">
+                        <i class="fas fa-id-card"></i> Emergency Wallet Card
+                    </a>
+                </div>
+            </div>
+
+            <!-- Important Disclaimer -->
+            <div class="disclaimer" style="margin-top: 3rem;">
+                <div class="disclaimer-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <h4>Emergency Response Information</h4>
+                        <p><strong>This page provides emergency contact information for educational purposes.</strong> In a real emergency, always call 911 or your local emergency number first. The numbers listed may not be accurate for your specific location. Always verify local emergency numbers and keep them updated in your phone. This information should not replace professional medical advice or emergency response procedures.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 MedAI. Educational project only. For emergencies, call 911 or your local emergency number.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Emergency Page Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Call button functionality
+            document.querySelectorAll('.call-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const number = this.getAttribute('data-number');
+                    const card = this.closest('.number-card');
+                    
+                    // Add shake animation
+                    card.classList.add('shake');
+                    setTimeout(() => {
+                        card.classList.remove('shake');
+                    }, 500);
+                    
+                    // Show call confirmation
+                    const serviceName = card.querySelector('div[style*="font-weight: 500"]').textContent;
+                    if (confirm(`Call ${serviceName} at ${number}?`)) {
+                        // In a real app, this would initiate a phone call
+                        // For web demo, show a message
+                        alert(`In a real app, this would call ${serviceName} at ${number}\n\nFor demo purposes only - please use real emergency services in actual emergencies.`);
+                        
+                        // Simulate call animation
+                        this.innerHTML = '<i class="fas fa-phone-slash"></i>';
+                        this.style.background = 'var(--success)';
+                        
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="fas fa-phone"></i>';
+                            this.style.background = 'var(--primary)';
+                        }, 2000);
+                    }
+                });
+            });
+            
+            // Directions button functionality
+            document.querySelectorAll('.btn-small').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const locationCard = this.closest('.location-card');
+                    const locationName = locationCard.querySelector('h4').textContent;
+                    alert(`In a real app, this would open maps to ${locationName}`);
+                });
+            });
+            
+            // Download buttons functionality
+            document.getElementById('downloadContacts').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Emergency Contacts PDF would download. Contains all numbers from this page.');
+            });
+            
+            document.getElementById('downloadGuide').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('First Aid Quick Guide PDF would download. Basic first aid instructions.');
+            });
+            
+            document.getElementById('downloadWallet').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Emergency Wallet Card PDF would download. Printable card with essential numbers.');
+            });
+            
+            // Emergency number search functionality
+            const setupSearch = () => {
+                const searchInput = document.createElement('input');
+                searchInput.type = 'text';
+                searchInput.placeholder = 'Search emergency services...';
+                searchInput.style.cssText = `
+                    width: 100%;
+                    padding: 1rem;
+                    margin: 1rem 0;
+                    border: 2px solid var(--gray);
+                    border-radius: var(--radius);
+                    font-size: 1rem;
+                `;
+                
+                // Insert search bar after header
+                const header = document.querySelector('.emergency-header');
+                header.parentNode.insertBefore(searchInput, header.nextSibling);
+                
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const numberCards = document.querySelectorAll('.number-card');
+                    
+                    numberCards.forEach(card => {
+                        const text = card.textContent.toLowerCase();
+                        if (text.includes(searchTerm) || searchTerm === '') {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            };
+            
+            setupSearch();
+            
+            // Add emergency guide expand/collapse
+            const actionCards = document.querySelectorAll('.action-card');
+            actionCards.forEach(card => {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('h3').textContent;
+                    let details = '';
+                    
+                    switch(title) {
+                        case 'Heart Attack':
+                            details = '1. Call 911 immediately\n2. Have person sit down and rest\n3. Loosen tight clothing\n4. Give aspirin if not allergic\n5. Stay with person until help arrives';
+                            break;
+                        case 'Stroke (FAST)':
+                            details = 'F - Face drooping\nA - Arm weakness\nS - Speech difficulty\nT - Time to call 911\nNote time symptoms started';
+                            break;
+                        case 'Severe Allergic Reaction':
+                            details = '1. Use epinephrine auto-injector if available\n2. Call 911 immediately\n3. Help person use inhaler if needed\n4. Loosen tight clothing\n5. Lay person flat if breathing is okay';
+                            break;
+                    }
+                    
+                    if (details) {
+                        alert(`${title} Emergency Steps:\n\n${details}`);
+                    }
+                });
+            });
+            
+            // Add emergency timer feature
+            const addEmergencyTimer = () => {
+                const timerDiv = document.createElement('div');
+                timerDiv.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    left: 20px;
+                    background: var(--danger);
+                    color: white;
+                    padding: 1rem;
+                    border-radius: var(--radius);
+                    display: none;
+                    z-index: 1000;
+                    box-shadow: var(--shadow-lg);
+                `;
+                timerDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <div style="font-weight: 600;">Emergency Called</div>
+                            <div id="timerDisplay">00:00</div>
+                        </div>
+                        <button id="stopTimer" style="
+                            background: white;
+                            color: var(--danger);
+                            border: none;
+                            padding: 5px 10px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                        ">Stop</button>
+                    </div>
+                `;
+                
+                document.body.appendChild(timerDiv);
+                
+                let timerInterval;
+                let seconds = 0;
+                
+                // Start timer when emergency call is made
+                document.querySelectorAll('.call-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const number = this.getAttribute('data-number');
+                        if (number === '911' || number.includes('555-123')) {
+                            timerDiv.style.display = 'block';
+                            startTimer();
+                        }
+                    });
+                });
+                
+                function startTimer() {
+                    seconds = 0;
+                    clearInterval(timerInterval);
+                    timerInterval = setInterval(() => {
+                        seconds++;
+                        const minutes = Math.floor(seconds / 60);
+                        const remainingSeconds = seconds % 60;
+                        document.getElementById('timerDisplay').textContent = 
+                            `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                    }, 1000);
+                }
+                
+                document.getElementById('stopTimer').addEventListener('click', function() {
+                    clearInterval(timerInterval);
+                    timerDiv.style.display = 'none';
+                });
+            };
+            
+            addEmergencyTimer();
+            
+            // Add quick dial favorites
+            const addFavorites = () => {
+                const favoritesDiv = document.createElement('div');
+                favoritesDiv.style.cssText = `
+                    margin: 2rem 0;
+                    padding: 1.5rem;
+                    background: var(--light);
+                    border-radius: var(--radius);
+                `;
+                
+                favoritesDiv.innerHTML = `
+                    <h3><i class="fas fa-star"></i> Quick Dial Favorites</h3>
+                    <p style="margin-bottom: 1rem;">Mark your most used emergency contacts</p>
+                    <div id="favoritesContainer" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <!-- Favorites will be added here -->
+                    </div>
+                `;
+                
+                // Insert before footer
+                const main = document.querySelector('main');
+                main.insertBefore(favoritesDiv, main.querySelector('.footer'));
+                
+                // Function to add favorite
+                window.addToFavorites = function(number, name) {
+                    const favoriteBtn = document.createElement('button');
+                    favoriteBtn.className = 'btn btn-small';
+                    favoriteBtn.innerHTML = `<i class="fas fa-phone"></i> ${name}`;
+                    favoriteBtn.onclick = function() {
+                        alert(`Quick dialing ${name} at ${number}`);
+                    };
+                    
+                    document.getElementById('favoritesContainer').appendChild(favoriteBtn);
+                };
+            };
+            
+            addFavorites();
+        });
+    </script>
+</body>
+</html>

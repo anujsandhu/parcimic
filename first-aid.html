@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedAI | First Aid Guide</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* First Aid Page Specific Styles */
+        .first-aid-search {
+            margin-bottom: 2rem;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--gray);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            margin-bottom: 2rem;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        /* Categories with Medicine Info */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .category-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+        
+        .category-card.active {
+            border-color: var(--primary);
+            background: var(--light);
+        }
+        
+        .medicine-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-light);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .category-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        /* Guide Content with Medicine Section */
+        .guide-content {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .guide-content.active {
+            display: block;
+        }
+        
+        .guide-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .guide-header i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        .medicine-section {
+            background: linear-gradient(135deg, #F0F9FF 0%, #FFFFFF 100%);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin: 2rem 0;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .medicine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .medicine-card {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--gray);
+            transition: all 0.3s ease;
+        }
+        
+        .medicine-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .medicine-name {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .medicine-dosage {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .medicine-note {
+            font-size: 0.8rem;
+            color: var(--gray-dark);
+            font-style: italic;
+        }
+        
+        .warning-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--danger);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+        
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .step-card {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .step-number {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Emergency Note */
+        .emergency-note {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid var(--danger);
+            color: var(--danger);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .emergency-note i {
+            font-size: 1.5rem;
+        }
+        
+        /* Quick Tips */
+        .quick-tips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .tip-card {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: var(--radius);
+            text-align: center;
+            border: 1px solid var(--gray);
+        }
+        
+        .tip-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .guide-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .medicine-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-stethoscope"></i>
+                MedAI
+            </a>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="symptom-checker.html" class="nav-link"><i class="fas fa-heartbeat"></i> Symptom Checker</a></li>
+                <li><a href="emergency.html" class="nav-link"><i class="fas fa-ambulance"></i> Emergency</a></li>
+                <li><a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="first-aid">
+        <div class="container">
+            <div class="section-title">
+                <h1>First Aid & Medicine Guide</h1>
+                <p class="subtitle">Click on any condition to see step-by-step solutions and recommended medicines</p>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="first-aid-search">
+                <input type="text" class="search-box" placeholder="Search for conditions or medicines..." id="searchInput">
+            </div>
+
+            <!-- Categories Grid -->
+            <div class="categories-grid">
+                <div class="category-card active" data-condition="fever">
+                    <div class="medicine-tag">Common</div>
+                    <div class="category-icon">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <h3>Fever</h3>
+                    <p>Elevated body temperature</p>
+                </div>
+                
+                <div class="category-card" data-condition="headache">
+                    <div class="medicine-tag">Common</div>
+                    <div class="category-icon">
+                        <i class="fas fa-head-side-virus"></i>
+                    </div>
+                    <h3>Headache</h3>
+                    <p>Head pain & migraines</p>
+                </div>
+                
+                <div class="category-card" data-condition="cough_cold">
+                    <div class="medicine-tag">Common</div>
+                    <div class="category-icon">
+                        <i class="fas fa-lungs"></i>
+                    </div>
+                    <h3>Cough & Cold</h3>
+                    <p>Respiratory symptoms</p>
+                </div>
+                
+                <div class="category-card" data-condition="stomach">
+                    <div class="medicine-tag">Common</div>
+                    <div class="category-icon">
+                        <i class="fas fa-stomach"></i>
+                    </div>
+                    <h3>Stomach Issues</h3>
+                    <p>Nausea, vomiting, diarrhea</p>
+                </div>
+                
+                <div class="category-card" data-condition="cuts">
+                    <div class="medicine-tag">Injury</div>
+                    <div class="category-icon">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3>Cuts & Scrapes</h3>
+                    <p>Minor wounds</p>
+                </div>
+                
+                <div class="category-card" data-condition="burns">
+                    <div class="medicine-tag">Injury</div>
+                    <div class="category-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h3>Burns</h3>
+                    <p>Minor burns & scalds</p>
+                </div>
+                
+                <div class="category-card" data-condition="allergy">
+                    <div class="medicine-tag">Allergy</div>
+                    <div class="category-icon">
+                        <i class="fas fa-allergies"></i>
+                    </div>
+                    <h3>Allergic Reactions</h3>
+                    <p>Mild allergies</p>
+                </div>
+                
+                <div class="category-card" data-condition="sprain">
+                    <div class="medicine-tag">Injury</div>
+                    <div class="category-icon">
+                        <i class="fas fa-bone"></i>
+                    </div>
+                    <h3>Sprains & Strains</h3>
+                    <p>Muscle & joint injuries</p>
+                </div>
+            </div>
+
+            <!-- Guide Content -->
+            <div id="guideContent" class="guide-content active">
+                <div class="guide-header">
+                    <i class="fas fa-thermometer-half"></i>
+                    <div>
+                        <h2 id="guideTitle">Fever</h2>
+                        <p id="guideSubtitle">Managing elevated body temperature</p>
+                    </div>
+                </div>
+
+                <!-- Emergency Warning -->
+                <div class="emergency-note">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>⚠️ Emergency Warning:</strong> Seek immediate medical help if fever is above 103°F (39.4°C), lasts more than 3 days, or is accompanied by severe symptoms like stiff neck, confusion, or difficulty breathing.
+                    </div>
+                </div>
+
+                <!-- Quick Tips -->
+                <div class="quick-tips">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <h4>Stay Hydrated</h4>
+                        <p>Drink plenty of fluids</p>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                        <h4>Rest Well</h4>
+                        <p>Get adequate sleep</p>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-thermometer"></i>
+                        </div>
+                        <h4>Monitor Temp</h4>
+                        <p>Check every 4 hours</p>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h4>Know Limits</h4>
+                        <p>When to see a doctor</p>
+                    </div>
+                </div>
+
+                <!-- Step-by-Step Solutions -->
+                <h3><i class="fas fa-list-ol"></i> Step-by-Step Solution</h3>
+                <div id="stepsGrid" class="steps-grid">
+                    <!-- Steps will be populated by JavaScript -->
+                </div>
+
+                <!-- Recommended Medicines -->
+                <div class="medicine-section">
+                    <h3><i class="fas fa-pills"></i> Recommended Medicines</h3>
+                    <p class="form-hint">Common over-the-counter options. Always consult a doctor before taking any medication.</p>
+                    
+                    <div id="medicineGrid" class="medicine-grid">
+                        <!-- Medicines will be populated by JavaScript -->
+                    </div>
+                    
+                    <div style="margin-top: 1rem; padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: var(--radius);">
+                        <p><strong>⚠️ Important Note:</strong> Dosages vary by age and weight. Follow package instructions or doctor's advice. Do not combine medications without consulting a healthcare professional.</p>
+                    </div>
+                </div>
+
+                <!-- Do's and Don'ts -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
+                    <div style="padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border-radius: var(--radius); border-left: 4px solid var(--success);">
+                        <h4><i class="fas fa-check-circle" style="color: var(--success);"></i> Do's</h4>
+                        <ul id="dosList" style="margin: 1rem 0; padding-left: 1.5rem;">
+                            <!-- Do's will be populated by JavaScript -->
+                        </ul>
+                    </div>
+                    
+                    <div style="padding: 1.5rem; background: rgba(239, 68, 68, 0.1); border-radius: var(--radius); border-left: 4px solid var(--danger);">
+                        <h4><i class="fas fa-times-circle" style="color: var(--danger);"></i> Don'ts</h4>
+                        <ul id="dontsList" style="margin: 1rem 0; padding-left: 1.5rem;">
+                            <!-- Don'ts will be populated by JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- When to See a Doctor -->
+                <div style="background: var(--light); padding: 1.5rem; border-radius: var(--radius); margin: 2rem 0;">
+                    <h4><i class="fas fa-user-md" style="color: var(--primary);"></i> When to See a Doctor</h4>
+                    <ul id="doctorList" style="margin: 1rem 0; padding-left: 1.5rem;">
+                        <!-- Doctor visit triggers will be populated by JavaScript -->
+                    </ul>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="disclaimer">
+                    <div class="disclaimer-content">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <h4>Medical Disclaimer</h4>
+                            <p>This information is for educational purposes only. It is not medical advice. Always consult with a healthcare professional for proper diagnosis and treatment. Do not use this information to self-diagnose or self-treat. In case of emergency, call your local emergency number immediately.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 MedAI. Educational project only. For emergencies, call 911 or your local emergency number.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // First Aid Guide Data
+        const firstAidData = {
+            'fever': {
+                title: 'Fever',
+                icon: 'fas fa-thermometer-half',
+                subtitle: 'Managing elevated body temperature (above 100.4°F or 38°C)',
+                steps: [
+                    'Check temperature with a thermometer',
+                    'Rest in a cool, comfortable environment',
+                    'Drink plenty of fluids (water, clear soups, electrolyte drinks)',
+                    'Take fever-reducing medication if needed',
+                    'Use cool compresses on forehead and neck',
+                    'Wear lightweight, breathable clothing',
+                    'Monitor temperature every 4 hours'
+                ],
+                medicines: [
+                    {
+                        name: 'Acetaminophen (Tylenol)',
+                        dosage: '325-650mg every 4-6 hours',
+                        note: 'Max 3000mg/day. Do not exceed recommended dosage.',
+                        warning: 'Not for liver patients'
+                    },
+                    {
+                        name: 'Ibuprofen (Advil, Motrin)',
+                        dosage: '200-400mg every 6-8 hours',
+                        note: 'Take with food. Max 1200mg/day for OTC use.',
+                        warning: 'Not for stomach ulcer patients'
+                    },
+                    {
+                        name: 'Aspirin',
+                        dosage: '325-650mg every 4 hours',
+                        note: 'Not recommended for children under 16',
+                        warning: 'Avoid in children'
+                    }
+                ],
+                dos: [
+                    'Stay hydrated with water and electrolytes',
+                    'Get plenty of rest',
+                    'Use a fan for air circulation',
+                    'Take lukewarm baths',
+                    'Monitor symptoms closely'
+                ],
+                donts: [
+                    'Don\'t bundle up in heavy blankets',
+                    'Don\'t use alcohol baths',
+                    'Don\'t take aspirin for children',
+                    'Don\'t ignore persistent high fever',
+                    'Don\'t combine fever medications without advice'
+                ],
+                doctorWhen: [
+                    'Fever above 103°F (39.4°C)',
+                    'Fever lasting more than 3 days',
+                    'Difficulty breathing or chest pain',
+                    'Severe headache or stiff neck',
+                    'Confusion or seizures',
+                    'Rash that doesn\'t fade when pressed'
+                ]
+            },
+            'headache': {
+                title: 'Headache',
+                icon: 'fas fa-head-side-virus',
+                subtitle: 'Managing head pain, tension headaches, and migraines',
+                steps: [
+                    'Rest in a quiet, dark room',
+                    'Apply cold or warm compress to forehead',
+                    'Gently massage temples and neck',
+                    'Stay hydrated - drink water',
+                    'Practice relaxation techniques',
+                    'Consider over-the-counter pain relief',
+                    'Avoid bright lights and loud noises'
+                ],
+                medicines: [
+                    {
+                        name: 'Acetaminophen (Tylenol)',
+                        dosage: '500-1000mg as needed',
+                        note: 'For mild to moderate pain relief',
+                        warning: ''
+                    },
+                    {
+                        name: 'Ibuprofen (Advil)',
+                        dosage: '200-400mg every 6-8 hours',
+                        note: 'Anti-inflammatory for tension headaches',
+                        warning: 'Take with food'
+                    },
+                    {
+                        name: 'Aspirin',
+                        dosage: '325-650mg as needed',
+                        note: 'For adults only',
+                        warning: 'Avoid in children'
+                    },
+                    {
+                        name: 'Naproxen (Aleve)',
+                        dosage: '220mg every 8-12 hours',
+                        note: 'Longer lasting relief',
+                        warning: 'Take with food'
+                    }
+                ],
+                dos: [
+                    'Stay hydrated throughout the day',
+                    'Practice stress management',
+                    'Maintain good posture',
+                    'Get regular sleep',
+                    'Use relaxation techniques'
+                ],
+                donts: [
+                    'Don\'t skip meals',
+                    'Don\'t consume excessive caffeine',
+                    'Don\'t strain your eyes',
+                    'Don\'t ignore persistent headaches',
+                    'Don\'t self-medicate for more than 2 days'
+                ],
+                doctorWhen: [
+                    'Severe, sudden "thunderclap" headache',
+                    'Headache with fever and stiff neck',
+                    'Headache after head injury',
+                    'Worsening headache over days',
+                    'Headache with vision changes',
+                    'Headache with weakness or numbness'
+                ]
+            },
+            'cough_cold': {
+                title: 'Cough & Cold',
+                icon: 'fas fa-lungs',
+                subtitle: 'Managing respiratory symptoms and common cold',
+                steps: [
+                    'Get plenty of rest',
+                    'Stay hydrated with warm fluids',
+                    'Use a humidifier or steam inhalation',
+                    'Gargle with warm salt water',
+                    'Use cough drops or lozenges',
+                    'Elevate head while sleeping',
+                    'Wash hands frequently to prevent spread'
+                ],
+                medicines: [
+                    {
+                        name: 'Dextromethorphan (DM)',
+                        dosage: '10-20mg every 4-6 hours',
+                        note: 'Cough suppressant',
+                        warning: 'Max 120mg/day'
+                    },
+                    {
+                        name: 'Guaifenesin (Mucinex)',
+                        dosage: '200-400mg every 4 hours',
+                        note: 'Expectorant for chest congestion',
+                        warning: 'Drink extra water'
+                    },
+                    {
+                        name: 'Pseudoephedrine (Sudafed)',
+                        dosage: '30-60mg every 4-6 hours',
+                        note: 'Decongestant',
+                        warning: 'May raise blood pressure'
+                    },
+                    {
+                        name: 'Diphenhydramine (Benadryl)',
+                        dosage: '25-50mg every 4-6 hours',
+                        note: 'For runny nose and sneezing',
+                        warning: 'Causes drowsiness'
+                    }
+                ],
+                dos: [
+                    'Drink warm tea with honey',
+                    'Use saline nasal spray',
+                    'Get adequate sleep',
+                    'Eat nutritious foods',
+                    'Use vapor rub for congestion'
+                ],
+                donts: [
+                    'Don\'t smoke or be around smoke',
+                    'Don\'t take multiple cold medicines',
+                    'Don\'t use antibiotics for viral cold',
+                    'Don\'t ignore worsening symptoms',
+                    'Don\'t go to work/school if contagious'
+                ],
+                doctorWhen: [
+                    'Difficulty breathing or wheezing',
+                    'Chest pain with coughing',
+                    'Cough lasting more than 3 weeks',
+                    'Fever above 101°F (38.3°C)',
+                    'Coughing up blood',
+                    'Severe sore throat with fever'
+                ]
+            },
+            'stomach': {
+                title: 'Stomach Issues',
+                icon: 'fas fa-stomach',
+                subtitle: 'Managing nausea, vomiting, diarrhea, and stomach pain',
+                steps: [
+                    'Stop eating solid foods for 4-6 hours',
+                    'Sip clear liquids slowly (water, broth)',
+                    'Try BRAT diet: Bananas, Rice, Applesauce, Toast',
+                    'Rest and avoid physical activity',
+                    'Apply warm compress to stomach',
+                    'Take small, frequent sips of water',
+                    'Gradually reintroduce bland foods'
+                ],
+                medicines: [
+                    {
+                        name: 'Loperamide (Imodium)',
+                        dosage: '2mg after loose stool',
+                        note: 'For diarrhea, max 8mg/day',
+                        warning: 'Not for bacterial infections'
+                    },
+                    {
+                        name: 'Bismuth Subsalicylate (Pepto-Bismol)',
+                        dosage: '2 tablets every 30-60 minutes',
+                        note: 'For diarrhea, nausea, heartburn',
+                        warning: 'May darken stool/tongue'
+                    },
+                    {
+                        name: 'Antacids (Tums, Rolaids)',
+                        dosage: 'As directed on package',
+                        note: 'For heartburn and indigestion',
+                        warning: ''
+                    },
+                    {
+                        name: 'Dimenhydrinate (Dramamine)',
+                        dosage: '50-100mg every 4-6 hours',
+                        note: 'For nausea and motion sickness',
+                        warning: 'Causes drowsiness'
+                    }
+                ],
+                dos: [
+                    'Stay hydrated with electrolyte solutions',
+                    'Eat bland, easy-to-digest foods',
+                    'Rest in a comfortable position',
+                      'Wash hands frequently',
+                    'Keep a food diary to identify triggers'
+                ],
+                donts: [
+                    'Don\'t eat dairy, fatty, or spicy foods',
+                    'Don\'t take anti-diarrhea meds immediately',
+                    'Don\'t consume caffeine or alcohol',
+                    'Don\'t ignore severe abdominal pain',
+                    'Don\'t prepare food for others'
+                ],
+                doctorWhen: [
+                    'Severe abdominal pain',
+                    'Vomiting for more than 24 hours',
+                    'Blood in vomit or stool',
+                    'Signs of dehydration',
+                    'Fever above 101°F (38.3°C)',
+                    'Symptoms lasting more than 2 days'
+                ]
+            },
+            'cuts': {
+                title: 'Cuts & Scrapes',
+                icon: 'fas fa-cut',
+                subtitle: 'First aid for minor wounds and abrasions',
+                steps: [
+                    'Wash hands with soap and water',
+                    'Clean wound with running water',
+                    'Apply gentle pressure to stop bleeding',
+                    'Apply antibiotic ointment',
+                    'Cover with sterile bandage',
+                    'Change dressing daily',
+                    'Watch for signs of infection'
+                ],
+                medicines: [
+                    {
+                        name: 'Antibiotic Ointment (Neosporin)',
+                        dosage: 'Apply thin layer 1-3 times daily',
+                        note: 'Prevents infection in minor wounds',
+                        warning: 'Discontinue if rash develops'
+                    },
+                    {
+                        name: 'Hydrogen Peroxide 3%',
+                        dosage: 'Clean wound once',
+                        note: 'Initial cleaning only',
+                        warning: 'Don\'t use repeatedly'
+                    },
+                    {
+                        name: 'Pain Reliever (Acetaminophen)',
+                        dosage: '325-650mg as needed',
+                        note: 'For pain management',
+                        warning: ''
+                    },
+                    {
+                        name: 'Antiseptic Wipes',
+                        dosage: 'Use for cleaning',
+                        note: 'Portable wound cleaning',
+                        warning: ''
+                    }
+                ],
+                dos: [
+                    'Keep wound clean and dry',
+                    'Change bandages regularly',
+                    'Watch for signs of infection',
+                    'Keep tetanus shots updated',
+                    'Elevate injured area if swollen'
+                ],
+                donts: [
+                    'Don\'t blow on the wound',
+                    'Don\'t use harsh chemicals repeatedly',
+                    'Don\'t pick at scabs',
+                    'Don\'t use adhesive bandages on sensitive skin',
+                    'Don\'t ignore signs of infection'
+                ],
+                doctorWhen: [
+                    'Deep cut that won\'t stop bleeding',
+                    'Wound caused by dirty or rusty object',
+                    'Signs of infection (redness, pus, fever)',
+                    'Numbness around wound',
+                    'Unable to clean wound properly',
+                      'Tetanus shot needed (if last shot >5 years)'
+                ]
+            },
+            'burns': {
+                title: 'Burns',
+                icon: 'fas fa-fire',
+                subtitle: 'First aid for minor burns and scalds',
+                steps: [
+                    'Cool burn under cool running water for 10-15 minutes',
+                    'Remove tight items before swelling',
+                    'Apply burn cream or aloe vera',
+                    'Cover with sterile non-stick bandage',
+                    'Take pain reliever if needed',
+                    'Protect from sun while healing',
+                    'Monitor for signs of infection'
+                ],
+                medicines: [
+                    {
+                        name: 'Burn Cream (Silvadene)',
+                        dosage: 'Apply thin layer 1-2 times daily',
+                        note: 'For minor burns, prevents infection',
+                        warning: 'Discontinue if irritation occurs'
+                    },
+                    {
+                        name: 'Aloe Vera Gel',
+                        dosage: 'Apply as needed',
+                        note: 'Cooling and healing properties',
+                        warning: 'Use 100% pure aloe'
+                    },
+                    {
+                        name: 'Pain Reliever (Ibuprofen)',
+                        dosage: '200-400mg every 6-8 hours',
+                        note: 'Reduces pain and inflammation',
+                        warning: 'Take with food'
+                    },
+                    {
+                        name: 'Antibiotic Ointment',
+                        dosage: 'Apply after cooling',
+                        note: 'Prevents infection',
+                        warning: ''
+                    }
+                ],
+                dos: [
+                    'Use cool water (not ice)',
+                    'Keep burn clean and dry',
+                    'Use loose bandages',
+                    'Drink plenty of fluids',
+                    'Protect from sunlight'
+                ],
+                donts: [
+                    'Don\'t use ice directly on burn',
+                    'Don\'t pop blisters',
+                    'Don\'t apply butter or oil',
+                    'Don\'t use adhesive bandages',
+                    'Don\'t scratch healing skin'
+                ],
+                doctorWhen: [
+                    'Burn larger than 3 inches',
+                    'Burns on face, hands, feet, or genitals',
+                    'Chemical or electrical burns',
+                    'Signs of infection',
+                    'Third-degree burns (white or charred skin)',
+                    'Difficulty breathing from smoke inhalation'
+                ]
+            },
+            'allergy': {
+                title: 'Allergic Reactions',
+                icon: 'fas fa-allergies',
+                subtitle: 'Managing mild allergic reactions',
+                steps: [
+                    'Remove from allergen source if known',
+                    'Take antihistamine medication',
+                    'Apply cool compress to itchy areas',
+                      'Use saline rinse for nasal symptoms',
+                    'Stay in air-conditioned environment',
+                    'Wear a mask if pollen is trigger',
+                    'Monitor for severe symptoms'
+                ],
+                medicines: [
+                    {
+                        name: 'Diphenhydramine (Benadryl)',
+                        dosage: '25-50mg every 4-6 hours',
+                        note: 'Fast-acting for severe reactions',
+                        warning: 'Causes drowsiness'
+                    },
+                    {
+                        name: 'Loratadine (Claritin)',
+                        dosage: '10mg once daily',
+                        note: 'Non-drowsy, 24-hour relief',
+                        warning: ''
+                    },
+                    {
+                        name: 'Cetirizine (Zyrtec)',
+                        dosage: '5-10mg once daily',
+                        note: 'For hay fever and hives',
+                        warning: 'May cause drowsiness in some'
+                    },
+                    {
+                        name: 'Fexofenadine (Allegra)',
+                        dosage: '60mg twice daily or 180mg once',
+                        note: 'Non-drowsy, for seasonal allergies',
+                        warning: ''
+                    }
+                ],
+                dos: [
+                    'Identify and avoid triggers',
+                    'Keep windows closed during high pollen',
+                    'Use air purifiers',
+                    'Shower after being outdoors',
+                    'Wear sunglasses outside'
+                ],
+                donts: [
+                    'Don\'t ignore severe symptoms',
+                    'Don\'t self-treat severe reactions',
+                    'Don\'t mix allergy medications',
+                    'Don\'t scratch itchy areas',
+                    'Don\'t expose to known allergens'
+                ],
+                doctorWhen: [
+                    'Difficulty breathing or swallowing',
+                    'Swelling of face, lips, or tongue',
+                    'Dizziness or fainting',
+                    'Rapid heartbeat',
+                    'Severe hives or rash',
+                    'Wheezing or chest tightness'
+                ]
+            },
+            'sprain': {
+                title: 'Sprains & Strains',
+                icon: 'fas fa-bone',
+                subtitle: 'Managing muscle and joint injuries',
+                steps: [
+                    'Rest the injured area',
+                    'Ice for 20 minutes every 2-3 hours',
+                    'Compress with elastic bandage',
+                    'Elevate above heart level',
+                    'Take anti-inflammatory medication',
+                    'Gentle movement after 48 hours',
+                    'Consider physical therapy exercises'
+                ],
+                medicines: [
+                    {
+                        name: 'Ibuprofen (Advil, Motrin)',
+                        dosage: '200-400mg every 6-8 hours',
+                        note: 'Reduces pain and inflammation',
+                        warning: 'Take with food'
+                    },
+                    {
+                        name: 'Naproxen (Aleve)',
+                        dosage: '220mg every 8-12 hours',
+                        note: 'Longer lasting anti-inflammatory',
+                        warning: 'Take with food'
+                    },
+                    {
+                        name: 'Acetaminophen (Tylenol)',
+                        dosage: '500-1000mg every 6 hours',
+                        note: 'For pain relief',
+                        warning: 'Max 3000mg/day'
+                    },
+                    {
+                        name: 'Topical Pain Relief (Bengay)',
+                        dosage: 'Apply 3-4 times daily',
+                        note: 'Localized pain relief',
+                        warning: 'Don\'t use with heating pad'
+                    }
+                ],
+                dos: [
+                    'Use RICE method (Rest, Ice, Compression, Elevation)',
+                    'Use crutches if needed',
+                    'Gradually return to activity',
+                    'Do rehabilitation exercises',
+                    'Use supportive braces'
+                ],
+                donts: [
+                    'Don\'t apply heat in first 48 hours',
+                    'Don\'t continue painful activities',
+                    'Don\'t ignore severe pain',
+                    'Don\'t skip rehabilitation',
+                    'Don\'t return to sports too soon'
+                ],
+                doctorWhen: [
+                    'Unable to bear weight',
+                    'Severe pain or swelling',
+                    'Numbness in injured area',
+                    'Joint appears deformed',
+                    'No improvement after 48 hours',
+                    'Hearing a "pop" at time of injury'
+                ]
+            }
+        };
+
+        // Initialize First Aid Page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial active condition
+            showCondition('fever');
+            
+            // Setup category card clicks
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove active class from all cards
+                    document.querySelectorAll('.category-card').forEach(c => {
+                        c.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked card
+                    this.classList.add('active');
+                    
+                    // Show condition
+                    const condition = this.getAttribute('data-condition');
+                    showCondition(condition);
+                    
+                    // Scroll to guide content
+                    document.getElementById('guideContent').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                });
+            });
+            
+            // Setup search functionality
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const cards = document.querySelectorAll('.category-card');
+                    
+                    cards.forEach(card => {
+                        const title = card.querySelector('h3').textContent.toLowerCase();
+                        const description = card.querySelector('p').textContent.toLowerCase();
+                        
+                        if (title.includes(searchTerm) || description.includes(searchTerm) || searchTerm === '') {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+            
+            // Function to show condition
+            function showCondition(condition) {
+                const data = firstAidData[condition];
+                if (!data) return;
+                
+                // Update title and icon
+                document.getElementById('guideTitle').textContent = data.title;
+                document.getElementById('guideSubtitle').textContent = data.subtitle;
+                document.querySelector('.guide-header i').className = data.icon;
+                            data.steps.forEach((step, index) => {
+                const stepCard = document.createElement('div');
+                stepCard.className = 'step-card';
+                stepCard.innerHTML = `
+                    <div class="step-number">Step ${index + 1}</div>
+                    <p>${step}</p>
+                `;
+                stepsGrid.appendChild(stepCard);
+            });
+            
+            // Update medicines
+            const medicineGrid = document.getElementById('medicineGrid');
+            medicineGrid.innerHTML = '';
+            
+            data.medicines.forEach(medicine => {
+                const medicineCard = document.createElement('div');
+                medicineCard.className = 'medicine-card';
+                medicineCard.innerHTML = `
+                    <div class="medicine-name">
+                        ${medicine.name}
+                        ${medicine.warning ? `<span class="warning-badge">${medicine.warning}</span>` : ''}
+                    </div>
+                    <div class="medicine-dosage">
+                        <i class="fas fa-prescription-bottle-alt"></i> ${medicine.dosage}
+                    </div>
+                    <div class="medicine-note">
+                        <i class="fas fa-info-circle"></i> ${medicine.note}
+                    </div>
+                `;
+                medicineGrid.appendChild(medicineCard);
+            });
+            
+            // Update Do's
+            const dosList = document.getElementById('dosList');
+            dosList.innerHTML = '';
+            data.dos.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                dosList.appendChild(li);
+            });
+            
+            // Update Don'ts
+            const dontsList = document.getElementById('dontsList');
+            dontsList.innerHTML = '';
+            data.donts.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                dontsList.appendChild(li);
+            });
+            
+            // Update when to see doctor
+            const doctorList = document.getElementById('doctorList');
+            doctorList.innerHTML = '';
+            data.doctorWhen.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                doctorList.appendChild(li);
+            });
+            
+            // Update emergency note based on condition
+            const emergencyNote = document.querySelector('.emergency-note');
+            let emergencyText = '';
+            
+            switch(condition) {
+                case 'fever':
+                    emergencyText = 'Seek immediate medical help if fever is above 103°F (39.4°C), lasts more than 3 days, or is accompanied by severe symptoms like stiff neck, confusion, or difficulty breathing.';
+                    break;
+                case 'headache':
+                    emergencyText = 'Seek immediate medical help for severe, sudden "thunderclap" headache, headache with fever and stiff neck, or headache after head injury with loss of consciousness.';
+                    break;
+                case 'cough_cold':
+                    emergencyText = 'Seek immediate medical help if experiencing difficulty breathing, chest pain, coughing up blood, or blue lips/fingernails.';
+                    break;
+                case 'stomach':
+                    emergencyText = 'Seek immediate medical help for severe abdominal pain, vomiting blood, black/tarry stools, or signs of severe dehydration.';
+                    break;
+                case 'cuts':
+                    emergencyText = 'Seek immediate medical help for deep cuts that won\'t stop bleeding, wounds caused by dirty objects, or signs of serious infection.';
+                    break;
+                case 'burns':
+                    emergencyText = 'Seek immediate medical help for burns larger than 3 inches, burns on face/hands/feet/genitals, or chemical/electrical burns.';
+                    break;
+                case 'allergy':
+                    emergencyText = 'Seek immediate medical help for difficulty breathing, swelling of face/lips/tongue, dizziness, or rapid heartbeat - these could be signs of anaphylaxis.';
+                    break;
+                case 'sprain':
+                    emergencyText = 'Seek immediate medical help if unable to bear weight, joint appears deformed, or there is numbness/tingling below the injury.';
+                    break;
+            }
+            
+            emergencyNote.querySelector('div').innerHTML = `
+                <strong>⚠️ Emergency Warning:</strong> ${emergencyText}
+            `;
+        }
+        
+        // Add click functionality to medicine cards
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.medicine-card')) {
+                const medicineCard = e.target.closest('.medicine-card');
+                const medicineName = medicineCard.querySelector('.medicine-name').textContent.split('⚠️')[0].trim();
+                
+                // Show medicine details modal
+                showMedicineDetails(medicineName);
+            }
+        });
+        
+        function showMedicineDetails(medicineName) {
+            // Create modal for medicine details
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                padding: 20px;
+            `;
+            
+            // Get medicine details from database
+            const medicineDetails = getMedicineDetails(medicineName);
+            
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 2rem;
+                    border-radius: var(--radius);
+                    max-width: 500px;
+                    width: 100%;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="margin: 0; color: var(--primary);">
+                            <i class="fas fa-pills"></i> ${medicineName}
+                        </h3>
+                        <button onclick="this.closest('[style]').remove()" style="
+                            background: none;
+                            border: none;
+                            font-size: 1.5rem;
+                            cursor: pointer;
+                            color: var(--secondary);
+                        ">×</button>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h4>Common Uses</h4>
+                        <p>${medicineDetails.uses}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h4>Typical Dosage</h4>
+                        <p><strong>Adults:</strong> ${medicineDetails.dosage.adults}</p>
+                        <p><strong>Children:</strong> ${medicineDetails.dosage.children}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h4>Important Warnings</h4>
+                        <ul style="margin: 0.5rem 0 0.5rem 1.5rem;">
+                            ${medicineDetails.warnings.map(warning => `<li>${warning}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h4>Side Effects</h4>
+                        <p>${medicineDetails.sideEffects}</p>
+                    </div>
+                    
+                    <div style="
+                        background: var(--light);
+                        padding: 1rem;
+                        border-radius: var(--radius);
+                        margin-top: 1.5rem;
+                    ">
+                        <p style="margin: 0; font-size: 0.9rem;">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i>
+                            <strong>Important:</strong> Always consult a doctor or pharmacist before taking any medication. This information is for educational purposes only.
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+        
+        function getMedicineDetails(medicineName) {
+            // Medicine database
+            const medicines = {
+                'Acetaminophen (Tylenol)': {
+                    uses: 'Pain relief and fever reduction',
+                    dosage: {
+                        adults: '325-1000mg every 4-6 hours as needed, maximum 3000mg per day',
+                        children: 'Based on weight: 10-15mg/kg every 4-6 hours'
+                    },
+                    warnings: [
+                        'Do not exceed maximum daily dose',
+                        'Avoid alcohol consumption',
+                        'Not for people with liver disease',
+                        'Check other medications for acetaminophen content'
+                    ],
+                    sideEffects: 'Rare at recommended doses. Overdose can cause liver damage.'
+                },
+                'Ibuprofen (Advil, Motrin)': {
+                    uses: 'Pain relief, fever reduction, anti-inflammatory',
+                    dosage: {
+                        adults: '200-400mg every 4-6 hours as needed, maximum 1200mg per day for OTC use',
+                        children: 'Based on weight: 5-10mg/kg every 6-8 hours'
+                    },
+                    warnings: [
+                        'Take with food to avoid stomach upset',
+                        'Not recommended for people with stomach ulcers',
+                        'May increase blood pressure',
+                        'Avoid in third trimester of pregnancy'
+                    ],
+                    sideEffects: 'Stomach upset, heartburn, nausea. Rare: kidney problems with prolonged use.'
+                },
+                'Aspirin': {
+                    uses: 'Pain relief, fever reduction, anti-inflammatory, blood thinning',
+                    dosage: {
+                        adults: '325-650mg every 4 hours as needed',
+                        children: 'Not recommended under 16 years due to Reye\'s syndrome risk'
+                    },
+                    warnings: [
+                        'Not for children under 16',
+                        'Avoid with other blood thinners',
+                        'May cause stomach bleeding',
+                        'Stop before surgery'
+                    ],
+                    sideEffects: 'Stomach upset, heartburn, increased bleeding tendency.'
+                },
+                'Loperamide (Imodium)': {
+                    uses: 'Diarrhea control',
+                    dosage: {
+                        adults: '2mg after first loose stool, then 1mg after each subsequent loose stool, maximum 8mg in 24 hours',
+                        children: 'Not recommended under 6 years without doctor advice'
+                    },
+                    warnings: [
+                        'Not for bacterial infections or bloody diarrhea',
+                        'Stop if abdominal distension occurs',
+                        'Drink plenty of fluids',
+                        'Do not use for more than 2 days'
+                    ],
+                    sideEffects: 'Constipation, dizziness, dry mouth.'
+                },
+                'Diphenhydramine (Benadryl)': {
+                    uses: 'Allergy relief, antihistamine, sleep aid',
+                    dosage: {
+                        adults: '25-50mg every 4-6 hours as needed',
+                        children: 'Based on age and weight, consult doctor'
+                    },
+                    warnings: [
+                        'Causes drowsiness - do not drive or operate machinery',
+                        'Avoid alcohol',
+                        'May cause dry mouth',
+                        'Not for children under 2 without doctor advice'
+                    ],
+                    sideEffects: 'Drowsiness, dry mouth, dizziness, blurred vision.'
+                }
+                // Add more medicines as needed
+            };
+            
+            return medicines[medicineName] || {
+                uses: 'General medication information',
+                dosage: {
+                    adults: 'As directed by doctor or package instructions',
+                    children: 'Consult doctor for pediatric dosage'
+                },
+                warnings: ['Consult healthcare professional before use', 'Follow package instructions'],
+                sideEffects: 'Varies by individual. Consult healthcare provider for specific information.'
+            };
+        }
+        
+        // Add print functionality
+        const printButton = document.createElement('button');
+        printButton.className = 'btn btn-secondary';
+        printButton.innerHTML = '<i class="fas fa-print"></i> Print Guide';
+        printButton.style.marginTop = '1rem';
+        printButton.onclick = function() {
+            window.print();
+        };
+        
+        document.querySelector('.guide-content').appendChild(printButton);
+        
+        // Add quick navigation
+        const quickNav = document.createElement('div');
+        quickNav.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: none;
+        `;
+        quickNav.innerHTML = `
+            <div style="font-weight: 600; margin-bottom: 0.5rem;">Quick Jump</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                ${Object.keys(firstAidData).map(condition => 
+                    `<button onclick="scrollToCondition('${condition}')" style="
+                        background: white;
+                        color: var(--primary);
+                        border: none;
+                        padding: 0.25rem 0.5rem;
+                        border-radius: 4px;
+                        font-size: 0.8rem;
+                        cursor: pointer;
+                    ">${firstAidData[condition].title}</button>`
+                ).join('')}
+            </div>
+        `;
+        
+        document.body.appendChild(quickNav);
+        
+        // Show quick nav when scrolling
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                quickNav.style.display = 'block';
+            } else {
+                quickNav.style.display = 'none';
+            }
+        });
+        
+        // Global function for quick navigation
+        window.scrollToCondition = function(condition) {
+            // Find and click the corresponding card
+            const card = document.querySelector(`.category-card[data-condition="${condition}"]`);
+            if (card) {
+                card.click();
+            }
+        };
+    });
+</script>
