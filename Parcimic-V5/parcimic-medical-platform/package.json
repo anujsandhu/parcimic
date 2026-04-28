@@ -1,5 +1,28 @@
 {
+  "name": "parcimic-medical-platform",
+  "version": "2.0.0",
+  "description": "Sepsis Early Warning System — AI-powered clinical decision support",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev:server": "nodemon server.js",
+    "dev:client": "cd client && npm start",
+    "install:all": "npm install && cd client && npm install",
+    "build": "cd client && npm run build",
+    "postinstall": "cd client && npm install"
+  },
   "dependencies": {
-    "firebase": "^12.8.0"
-  }
+    "axios": "^1.6.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "helmet": "^7.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "keywords": ["sepsis", "medical", "ai", "gemini", "firebase"],
+  "author": "Parcimic / Grooveat",
+  "license": "ISC"
 }
