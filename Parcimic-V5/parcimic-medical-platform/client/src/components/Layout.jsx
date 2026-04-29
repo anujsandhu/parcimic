@@ -41,6 +41,69 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
 
+      {/* ── Mobile Top Bar ── */}
+      <header className="lg:hidden sticky top-0 z-50 bg-white border-b border-gray-200">
+        <div className="px-4">
+          <div className="flex items-center justify-between h-14">
+            {/* Logo */}
+            <NavLink to="/" className="flex items-center gap-2">
+              <img
+                src="/assets/logos/parcimic-logo.png"
+                alt="Parcimic"
+                className="h-7 w-auto object-contain"
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+              <span className="font-bold text-gray-900 text-base">Parcimic</span>
+            </NavLink>
+
+            {/* Right side */}
+            <div className="flex items-center gap-2">
+              {user ? (
+                <div className="relative" ref={dropRef}>
+                  <button onClick={() => setDrop(!drop)}
+                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                    {user.photoURL
+                      ? <img src={user.photoURL} alt="" className="w-7 h-7 rounded-full" />
+                      : <div className="w-7 h-7 bg-brand-500 rounded-full flex items-center justify-center text-white text-xs font-bold">{initial}</div>
+                    }
+                    <ChevronDown size={12} className={`text-gray-400 transition-transform duration-150 ${drop ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {drop && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50 animate-fade-in">
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <p className="text-sm font-semibold text-gray-900 truncate">{user.displayName || 'User'}</p>
+                        <p className="text-xs text-gray-400 truncate mt-0.5">{user.email}</p>
+                      </div>
+                      {[
+                        { to: '/profile',  icon: User,     label: 'Profile' },
+                        { to: '/history',  icon: Clock,    label: 'History' },
+                        { to: '/check',    icon: Activity, label: 'New Check' },
+                      ].map(({ to, icon: Icon, label }) => (
+                        <NavLink key={to} to={to} onClick={() => setDrop(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                          <Icon size={15} className="text-gray-400" strokeWidth={1.75} /> {label}
+                        </NavLink>
+                      ))}
+                      <div className="border-t border-gray-100 mt-1 pt-1">
+                        <button onClick={handleSignOut}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-danger-600 hover:bg-danger-50 transition-colors">
+                          <LogOut size={15} strokeWidth={1.75} /> Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <NavLink to="/profile" className="btn btn-secondary text-sm px-3 py-1.5">
+                  Sign In
+                </NavLink>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
       {/* ── Desktop Top Navbar ── */}
       <header className="hidden lg:block sticky top-0 z-50 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
