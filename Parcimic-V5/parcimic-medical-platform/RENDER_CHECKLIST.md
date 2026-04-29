@@ -31,10 +31,10 @@
 Copy these exactly:
 
 - [ ] `NODE_ENV` = `production`
-- [ ] `GROQ_API_KEY` = `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`
-- [ ] `OPENROUTER_API_KEY` = `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`
-- [ ] `GEMINI_API_KEY` = `AIzaSyC7zwRWScFvl9ZvhF2AsO7VFliNc2Sr3ok`
-- [ ] `HF_API_KEY` = `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`
+- [ ] `GROQ_API_KEY` = `YOUR_GROQ_API_KEY_HERE`
+- [ ] `OPENROUTER_API_KEY` = `YOUR_OPENROUTER_API_KEY_HERE`
+- [ ] `GEMINI_API_KEY` = `YOUR_GEMINI_API_KEY_HERE`
+- [ ] `HF_API_KEY` = `YOUR_HUGGINGFACE_API_KEY_HERE`
 
 ### 5. Deploy
 - [ ] Click "Create Web Service"

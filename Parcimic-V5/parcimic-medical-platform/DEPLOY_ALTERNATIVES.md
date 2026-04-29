@@ -15,9 +15,9 @@
    - Add each variable:
      ```
      NODE_ENV=production
-     GROQ_API_KEY=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
-     OPENROUTER_API_KEY=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
-     GEMINI_API_KEY=AIzaSyC7zwRWScFvl9ZvhF2AsO7VFliNc2Sr3ok
+     GROQ_API_KEY=YOUR_GROQ_API_KEY_HERE
+     OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY_HERE
+     GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
      ```
 7. Click "Deploy"
 8. Copy your URL: `https://parcimic-api.up.railway.app`
@@ -53,9 +53,9 @@
 4. Set environment variables:
    ```bash
    flyctl secrets set NODE_ENV=production
-   flyctl secrets set GROQ_API_KEY=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
-   flyctl secrets set OPENROUTER_API_KEY=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
-   flyctl secrets set GEMINI_API_KEY=AIzaSyC7zwRWScFvl9ZvhF2AsO7VFliNc2Sr3ok
+   flyctl secrets set GROQ_API_KEY=YOUR_GROQ_API_KEY_HERE
+   flyctl secrets set OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY_HERE
+   flyctl secrets set GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
    ```
 
 5. Deploy:
@@ -95,13 +95,13 @@
 5. Add environment variables:
    ```bash
    vercel env add GROQ_API_KEY
-   # Paste: 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
+   # Paste: YOUR_GROQ_API_KEY_HERE
    
    vercel env add OPENROUTER_API_KEY
-   # Paste: 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
+   # Paste: YOUR_OPENROUTER_API_KEY_HERE
    
    vercel env add GEMINI_API_KEY
-   # Paste: AIzaSyC7zwRWScFvl9ZvhF2AsO7VFliNc2Sr3ok
+   # Paste: YOUR_GEMINI_API_KEY_HERE
    ```
 
 6. Redeploy:
@@ -173,7 +173,7 @@
 4. Set environment variables:
    ```bash
    gcloud run services update parcimic-api \
-     --set-env-vars="NODE_ENV=production,GROQ_API_KEY=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"
+     --set-env-vars="NODE_ENV=production,GROQ_API_KEY=YOUR_GROQ_API_KEY_HERE,OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY_HERE,GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE"
    ```
 
 **Pros**: Integrates with Firebase, generous free tier  
@@ -204,9 +204,9 @@
 4. Set environment variables:
    ```bash
    heroku config:set NODE_ENV=production
-   heroku config:set GROQ_API_KEY=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
-   heroku config:set OPENROUTER_API_KEY=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
-   heroku config:set GEMINI_API_KEY=AIzaSyC7zwRWScFvl9ZvhF2AsO7VFliNc2Sr3ok
+   heroku config:set GROQ_API_KEY=YOUR_GROQ_API_KEY_HERE
+   heroku config:set OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY_HERE
+   heroku config:set GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
    ```
 
 5. Deploy:
@@ -231,9 +231,9 @@
 5. Add environment variables:
    ```
    NODE_ENV=production
-   GROQ_API_KEY=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
-   OPENROUTER_API_KEY=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
-   GEMINI_API_KEY=AIzaSyC7zwRWScFvl9ZvhF2AsO7VFliNc2Sr3ok
+   GROQ_API_KEY=YOUR_GROQ_API_KEY_HERE
+   OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY_HERE
+   GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
    ```
 6. Your URL: `https://parcimic-api.glitch.me`
 
@@ -266,9 +266,9 @@
 
 5. Set environment variables:
    ```bash
-   space env add GROQ_API_KEY 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
-   space env add OPENROUTER_API_KEY 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
-   space env add GEMINI_API_KEY AIzaSyC7zwRWScFvl9ZvhF2AsO7VFliNc2Sr3ok
+   space env add GROQ_API_KEY YOUR_GROQ_API_KEY_HERE
+   space env add OPENROUTER_API_KEY YOUR_OPENROUTER_API_KEY_HERE
+   space env add GEMINI_API_KEY YOUR_GEMINI_API_KEY_HERE
    ```
 
 **Pros**: Completely free forever, no credit card  

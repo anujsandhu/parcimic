@@ -67,16 +67,16 @@ Click **"Add Environment Variable"** and add these one by one:
    **Value**: `production`
 
 2. **Key**: `GROQ_API_KEY`  
-   **Value**: `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`
+   **Value**: `YOUR_GROQ_API_KEY_HERE`
 
 3. **Key**: `OPENROUTER_API_KEY`  
-   **Value**: `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`
+   **Value**: `YOUR_OPENROUTER_API_KEY_HERE`
 
 4. **Key**: `GEMINI_API_KEY`  
-   **Value**: `AIzaSyC7zwRWScFvl9ZvhF2AsO7VFliNc2Sr3ok`
+   **Value**: `YOUR_GEMINI_API_KEY_HERE`
 
 5. **Key**: `HF_API_KEY`  
-   **Value**: `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`
+   **Value**: `YOUR_HUGGINGFACE_API_KEY_HERE`
 
 6. **Key**: `GROQ_MODEL`  
    **Value**: `llama-3.1-8b-instant`

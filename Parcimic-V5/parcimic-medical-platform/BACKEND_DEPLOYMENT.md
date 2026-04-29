@@ -25,10 +25,10 @@ In Render dashboard, go to "Environment" tab and add:
 ```
 NODE_ENV=production
 PORT=10000
-GROQ_API_KEY=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
-OPENROUTER_API_KEY=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
-GEMINI_API_KEY=AIzaSyC7zwRWScFvl9ZvhF2AsO7VFliNc2Sr3ok
-HF_API_KEY=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
+GROQ_API_KEY=YOUR_GROQ_API_KEY_HERE
+OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY_HERE
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
+HF_API_KEY=YOUR_HUGGINGFACE_API_KEY_HERE
 GROQ_MODEL=llama-3.1-8b-instant
 OPENROUTER_MODEL=google/gemma-3-12b-it:free
 GEMINI_MODEL=gemini-2.0-flash
@@ -81,9 +81,9 @@ Your URL: `https://parcimic-api.up.railway.app`
 heroku login
 heroku create parcimic-api
 heroku config:set NODE_ENV=production
-heroku config:set GROQ_API_KEY=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
-heroku config:set OPENROUTER_API_KEY=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
-heroku config:set GEMINI_API_KEY=AIzaSyC7zwRWScFvl9ZvhF2AsO7VFliNc2Sr3ok
+heroku config:set GROQ_API_KEY=YOUR_GROQ_API_KEY_HERE
+heroku config:set OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY_HERE
+heroku config:set GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
 git push heroku main
 ```
 

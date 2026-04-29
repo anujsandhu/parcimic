@@ -25,9 +25,9 @@
 6. Environment Variables (click "Advanced"):
    ```
    NODE_ENV=production
-   GROQ_API_KEY=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
-   OPENROUTER_API_KEY=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
-   GEMINI_API_KEY=AIzaSyC7zwRWScFvl9ZvhF2AsO7VFliNc2Sr3ok
+   GROQ_API_KEY=YOUR_GROQ_API_KEY_HERE
+   OPENROUTER_API_KEY=YOUR_OPENROUTER_API_KEY_HERE
+   GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
    ```
 7. Click "Create Web Service"
 8. Wait 2 minutes
