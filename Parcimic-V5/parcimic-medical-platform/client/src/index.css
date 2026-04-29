@@ -18,6 +18,12 @@
     /* Safe area support for notched devices */
     padding-top: env(safe-area-inset-top);
   }
+  
+  /* Responsive typography */
+  @media screen and (min-width: 768px) {
+    body { font-size: 15px; }
+  }
+  
   h1, h2, h3, h4 { letter-spacing: -0.015em; }
   
   /* Prevent text size adjustment on mobile */
@@ -27,6 +33,11 @@
       -moz-text-size-adjust: 100%;
       text-size-adjust: 100%;
     }
+  }
+  
+  /* Better tap highlighting */
+  * {
+    -webkit-tap-highlight-color: rgba(59, 130, 246, 0.1);
   }
 }
 
@@ -38,7 +49,17 @@
     border: 1px solid #E5E7EB;
     border-radius: 12px;
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+    padding: 1rem;
   }
+  
+  @media screen and (min-width: 640px) {
+    .card { padding: 1.25rem; border-radius: 16px; }
+  }
+  
+  @media screen and (min-width: 1024px) {
+    .card { padding: 1.5rem; }
+  }
+  
   .card-hover {
     @apply card transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-pointer;
   }
@@ -81,14 +102,31 @@
   }
   
   /* ── Responsive text ── */
+  .text-responsive-xl {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
+  }
   .text-responsive-lg {
-    @apply text-xl sm:text-2xl md:text-3xl;
+    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
   }
   .text-responsive-md {
     @apply text-lg sm:text-xl md:text-2xl;
   }
   .text-responsive-sm {
-    @apply text-base sm:text-lg;
+    @apply text-base sm:text-lg md:text-xl;
+  }
+  .text-responsive-xs {
+    @apply text-sm sm:text-base;
+  }
+  
+  /* ── Responsive spacing ── */
+  .container-responsive {
+    @apply px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
+  }
+  .section-spacing {
+    @apply py-6 sm:py-8 md:py-10 lg:py-12;
+  }
+  .card-spacing {
+    @apply p-4 sm:p-5 md:p-6;
   }
 
   /* ── Badges ── */
