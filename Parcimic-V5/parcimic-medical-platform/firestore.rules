@@ -1,14 +1,191 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /predictions/{docId} {
-      allow read, delete: if request.auth != null && resource.data.uid == request.auth.uid;
-      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+    
+    // ─── Utility Functions ──────────────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
     }
-    match /medications/{docId} {
-      allow read, delete: if request.auth != null && resource.data.uid == request.auth.uid;
-      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
-      allow update: if request.auth != null && resource.data.uid == request.auth.uid;
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isSignedIn() && (
+        request.auth.uid == resource.data.userId ||
+        request.auth.uid == resource.data.uid
+      );
+    }
+
+    function isNewDocOwner() {
+      return isSignedIn() && (
+        request.auth.uid == request.resource.data.userId ||
+        request.auth.uid == request.resource.data.uid
+      );
+    }
+
+    function hasValidTimestamp() {
+      return request.resource.data.createdAt == request.time ||
+             request.resource.data.createdAt == resource.data.createdAt;
+    }
+
+    // ─── Users Collection ──────────────────────────────────────────────────────
+    // Mirror of Firebase Auth - only written by auth trigger
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Only Cloud Function can write
+    }
+
+    // ─── Profiles Collection ────────────────────────────────────────────────────
+    // User profile data - owned by user only
+    match /profiles/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isNewDocOwner() && 
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.fullName is string &&
+                       request.resource.data.createdAt == request.time;
+      allow update: if isDocOwner() && 
+                       resource.data.userId == request.resource.data.userId &&
+                       hasValidTimestamp();
+      allow delete: if isDocOwner();
+    }
+
+    // ─── Family Members Collection ───────────────────────────────────────────────
+    // List of family members belonging to user
+    match /familyMembers/{memberId} {
+      allow create: if isNewDocOwner() && 
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.name is string &&
+                       request.resource.data.createdAt == request.time;
+      allow read: if isDocOwner();
+      allow update: if isDocOwner() && 
+                       resource.data.userId == request.resource.data.userId;
+      allow delete: if isDocOwner();
+    }
+
+    // ─── Health Records Collection ───────────────────────────────────────────────
+    // Risk predictions and health assessments
+    match /healthRecords/{recordId} {
+      allow create: if isNewDocOwner() && 
+                       request.resource.data.mode in ["vitals", "symptoms", "hybrid"] &&
+                       request.resource.data.createdAt == request.time;
+      allow read: if isDocOwner();
+      allow update: if false; // Health records are immutable after creation
+      allow delete: if isDocOwner();
+    }
+
+    // ─── Predictions Collection ──────────────────────────────────────────────────
+    // Sepsis risk predictions (legacy/alternative to healthRecords)
+    match /predictions/{predictionId} {
+      allow create: if isSignedIn() && 
+                       request.resource.data.uid == request.auth.uid;
+      allow read: if isSignedIn() && (
+        resource.data.uid == request.auth.uid ||
+        resource.data.userId == request.auth.uid
+      );
+      allow update: if false; // Predictions are immutable after creation
+      allow delete: if isSignedIn() && (
+        resource.data.uid == request.auth.uid ||
+        resource.data.userId == request.auth.uid
+      );
+    }
+
+    // ─── Symptoms Collection ────────────────────────────────────────────────────
+    // Daily symptom check-ins
+    match /symptoms/{entryId} {
+      allow create: if isNewDocOwner();
+      allow read: if isDocOwner();
+      allow update: if isDocOwner();
+      allow delete: if isDocOwner();
+    }
+
+    // ─── Lab Results Collection ──────────────────────────────────────────────────
+    // Lab test results
+    match /labResults/{labId} {
+      allow create: if isNewDocOwner() && 
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.testName is string &&
+                       request.resource.data.createdAt == request.time;
+      allow read: if isDocOwner();
+      allow update: if isDocOwner() && 
+                       resource.data.userId == request.resource.data.userId;
+      allow delete: if isDocOwner();
+    }
+
+    // ─── Medications Collection ──────────────────────────────────────────────────
+    // Medication plans
+    match /medications/{medId} {
+      allow create: if isNewDocOwner() && 
+                       request.resource.data.name is string;
+      allow read: if isDocOwner();
+      allow update: if isDocOwner();
+      allow delete: if isDocOwner();
+    }
+
+    // ─── Medication Logs Collection ──────────────────────────────────────────────
+    // Medication adherence tracking
+    match /medicationLogs/{logId} {
+      allow create: if isNewDocOwner() && 
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.status in ["taken", "missed"] &&
+                       request.resource.data.loggedAt == request.time;
+      allow read: if isDocOwner();
+      allow update: if isDocOwner() && 
+                       resource.data.userId == request.resource.data.userId;
+      allow delete: if isDocOwner();
+    }
+
+    // ─── Alerts Collection ──────────────────────────────────────────────────────
+    // System alerts (risk, symptoms, medications)
+    match /alerts/{alertId} {
+      allow create: if isNewDocOwner() && 
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.type in ["risk", "symptom", "medication"] &&
+                       request.resource.data.severity in ["low", "medium", "high"] &&
+                       request.resource.data.createdAt == request.time;
+      allow read: if isDocOwner();
+      allow update: if isDocOwner() && 
+                       resource.data.userId == request.resource.data.userId;
+      allow delete: if isDocOwner();
+    }
+
+    // ─── Timeline Collection ────────────────────────────────────────────────────
+    // Unified event log (read-only from app, written by backend)
+    match /timeline/{eventId} {
+      allow create: if isNewDocOwner() && 
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.type in ["risk", "symptom", "lab", "medication", "alert"] &&
+                       request.resource.data.createdAt == request.time;
+      allow read: if isDocOwner();
+      allow update: if false;
+      allow delete: if isDocOwner();
+    }
+
+    // ─── Locations Collection ───────────────────────────────────────────────────
+    // Location history (optional)
+    match /locations/{locationId} {
+      allow create: if isNewDocOwner() && 
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.lat is number &&
+                       request.resource.data.lng is number &&
+                       request.resource.data.createdAt == request.time;
+      allow read: if isDocOwner();
+      allow update: if false;
+      allow delete: if isDocOwner();
+    }
+
+    // ─── Batch metadata (optional) ───────────────────────────────────────────────
+    // For tracking batch operations
+    match /batches/{batchId} {
+      allow create: if isNewDocOwner() && request.resource.data.userId == request.auth.uid;
+      allow read: if isDocOwner();
+      allow update: if isDocOwner();
+    }
+
+    // ─── Catch-all (DENY) ───────────────────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

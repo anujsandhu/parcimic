@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Pill, Plus, Check, Clock, Trash2, Bell, LogIn, X, AlarmClock } from 'lucide-react';
 import {
   collection, addDoc, getDocs, updateDoc, deleteDoc,
@@ -25,16 +24,18 @@ function AddModal({ onClose, onAdd }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-6 animate-slide-up">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-gray-900">Add Medication</h2>
-          <button onClick={onClose} className="btn-ghost btn p-1.5 rounded-lg"><X size={16} strokeWidth={2} /></button>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4 bg-black/40 animate-fade-in">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 sm:p-6 animate-slide-up">
+        <div className="flex items-center justify-between mb-4 sm:mb-5">
+          <h2 className="text-base font-semibold text-gray-900">Add Medication</h2>
+          <button onClick={onClose} className="btn-ghost btn p-1.5 rounded-lg touch-target">
+            <X size={16} strokeWidth={2} />
+          </button>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <div>
             <label className="label">Medication name</label>
-            <input name="name" value={form.name} onChange={set} placeholder="e.g. Paracetamol" className="input" />
+            <input name="name" value={form.name} onChange={set} placeholder="e.g. Paracetamol" className="input" autoFocus />
           </div>
           <div>
             <label className="label">Dosage</label>
@@ -53,10 +54,13 @@ function AddModal({ onClose, onAdd }) {
             </div>
           </div>
         </div>
-        <div className="flex gap-3 mt-6">
+        <div className="flex gap-2 sm:gap-3 mt-5 sm:mt-6">
           <button onClick={onClose} className="btn btn-secondary flex-1">Cancel</button>
           <button onClick={handleAdd} disabled={saving} className="btn-primary btn flex-1">
-            {saving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><Plus size={14} strokeWidth={2.5} /> Add</>}
+            {saving
+              ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              : <><Plus size={14} strokeWidth={2.5} /> Add</>
+            }
           </button>
         </div>
       </div>
@@ -66,9 +70,9 @@ function AddModal({ onClose, onAdd }) {
 
 export default function Medications() {
   const { user, signInWithGoogle } = useAuth();
-  const [meds,     setMeds]     = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [showAdd,  setShowAdd]  = useState(false);
+  const [meds,    setMeds]    = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAdd, setShowAdd] = useState(false);
   const today = new Date().toDateString();
 
   const load = async () => {
@@ -121,12 +125,12 @@ export default function Medications() {
 
   if (!user) {
     return (
-      <div className="max-w-md mx-auto text-center py-16 space-y-4 animate-fade-in">
-        <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto">
-          <Pill size={24} className="text-gray-400" strokeWidth={1.75} />
+      <div className="max-w-sm mx-auto text-center py-16 space-y-4 animate-fade-in">
+        <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto">
+          <Pill size={22} className="text-gray-400" strokeWidth={1.75} />
         </div>
-        <h2 className="text-xl font-bold text-gray-900">Medication Reminders</h2>
-        <p className="text-sm text-gray-500 leading-relaxed">Sign in to track your medications and get daily reminders.</p>
+        <h2 className="text-lg font-bold text-gray-900">Medication Reminders</h2>
+        <p className="text-sm text-gray-500 leading-relaxed">Sign in to track your medications and never miss a dose.</p>
         <button onClick={signInWithGoogle} className="btn-primary btn mx-auto">
           <LogIn size={15} strokeWidth={2} /> Sign in with Google
         </button>
@@ -135,124 +139,161 @@ export default function Medications() {
   }
 
   return (
-    <div className="max-w-xl mx-auto space-y-6 animate-fade-in">
-      {showAdd && <AddModal onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
+    <div className="w-full">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
+        {showAdd && <AddModal onClose={() => setShowAdd(false)} onAdd={handleAdd} />}
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Medications</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {new Date().toLocaleDateString('en-IN', { weekday: 'long', month: 'long', day: 'numeric' })}
-          </p>
-        </div>
-        <button onClick={() => setShowAdd(true)} className="btn-primary btn btn-sm">
-          <Plus size={14} strokeWidth={2.5} /> Add
-        </button>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
-        {[
-          { label: 'Total',   value: meds.length,   icon: Pill,  cls: 'text-brand-500 bg-brand-50'   },
-          { label: 'Pending', value: pending.length, icon: Clock, cls: 'text-warning-600 bg-warning-50' },
-          { label: 'Taken',   value: taken.length,   icon: Check, cls: 'text-success-600 bg-success-50' },
-        ].map((s) => (
-          <div key={s.label} className="card p-4 text-center">
-            <div className={`w-8 h-8 ${s.cls} rounded-lg flex items-center justify-center mx-auto mb-2`}>
-              <s.icon size={15} strokeWidth={1.75} />
-            </div>
-            <p className="text-xl font-bold text-gray-900">{s.value}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{s.label}</p>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Medications</h1>
+            <p className="text-sm md:text-base text-gray-500 mt-1">
+              {new Date().toLocaleDateString('en-IN', { weekday: 'long', month: 'long', day: 'numeric' })}
+            </p>
           </div>
-        ))}
-      </div>
-
-      {/* Missed alert */}
-      {pending.length > 0 && taken.length > 0 && (
-        <div className="rounded-lg px-4 py-3 bg-warning-50 border border-warning-200 flex items-center gap-2">
-          <Bell size={15} className="text-warning-500 shrink-0" strokeWidth={2} />
-          <p className="text-sm text-warning-700 font-medium">
-            {pending.length} medication{pending.length > 1 ? 's' : ''} still to take today
-          </p>
-        </div>
-      )}
-
-      {loading ? (
-        <div className="card p-12 flex justify-center">
-          <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
-        </div>
-      ) : meds.length === 0 ? (
-        <div className="card p-10 text-center">
-          <Pill size={32} className="mx-auto mb-3 text-gray-300" strokeWidth={1.5} />
-          <p className="font-semibold text-gray-700 mb-1">No medications added yet</p>
-          <p className="text-xs text-gray-400 mb-5">Add your daily medications to track them here</p>
-          <button onClick={() => setShowAdd(true)} className="btn-primary btn btn-sm mx-auto">
-            <Plus size={13} strokeWidth={2.5} /> Add your first medication
+          <button onClick={() => setShowAdd(true)} className="btn-primary btn w-full sm:w-auto">
+            <Plus size={16} strokeWidth={2.5} /> Add Medication
           </button>
         </div>
-      ) : (
-        <div className="space-y-5">
-          {pending.length > 0 && (
-            <div>
-              <p className="section-label">Still to take</p>
-              <div className="card divide-y divide-gray-100">
-                {pending.map((m) => (
-                  <div key={m.id} className="flex items-center gap-4 px-5 py-4">
-                    <div className="w-9 h-9 bg-brand-50 rounded-xl flex items-center justify-center shrink-0">
-                      <Pill size={16} className="text-brand-500" strokeWidth={1.75} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900">{m.name}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs text-gray-400">{m.dosage}</span>
-                        <span className="text-gray-200">·</span>
-                        <AlarmClock size={11} className="text-gray-400" strokeWidth={1.75} />
-                        <span className="text-xs text-gray-400">{m.time}</span>
-                        <span className="text-gray-200">·</span>
-                        <span className="text-xs text-gray-400">{m.frequency}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button onClick={() => handleTake(m.id)}
-                        className="btn btn-sm bg-success-50 text-success-700 hover:bg-success-100 border border-success-200 px-3 py-1.5">
-                        <Check size={12} strokeWidth={2.5} /> Taken
-                      </button>
-                      <button onClick={() => handleDelete(m.id)}
-                        className="btn-ghost btn p-1.5 text-gray-300 hover:text-danger-500">
-                        <Trash2 size={13} strokeWidth={1.75} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
-          {taken.length > 0 && (
-            <div>
-              <p className="section-label">Taken today</p>
-              <div className="card divide-y divide-gray-100">
-                {taken.map((m) => (
-                  <div key={m.id} className="flex items-center gap-4 px-5 py-4 opacity-60">
-                    <div className="w-9 h-9 bg-success-50 rounded-xl flex items-center justify-center shrink-0">
-                      <Check size={16} className="text-success-600" strokeWidth={2.5} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-500 line-through">{m.name}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{m.dosage} · {m.time}</p>
-                    </div>
-                    <span className="badge-safe text-2xs shrink-0">Done</span>
-                    <button onClick={() => handleDelete(m.id)}
-                      className="btn-ghost btn p-1.5 text-gray-300 hover:text-danger-500">
-                      <Trash2 size={13} strokeWidth={1.75} />
-                    </button>
+        {/* DESKTOP: 2-COLUMN LAYOUT */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+          
+          {/* LEFT: Main content (2/3) */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-4 md:gap-6">
+              {[
+                { label: 'Total',   value: meds.length,   icon: Pill,  color: 'text-brand-500',   bg: 'bg-brand-50'   },
+                { label: 'Pending', value: pending.length, icon: Clock, color: 'text-warning-600', bg: 'bg-warning-50' },
+                { label: 'Taken',   value: taken.length,   icon: Check, color: 'text-success-600', bg: 'bg-success-50' },
+              ].map((s) => (
+                <div key={s.label} className="card p-5 md:p-6 text-center">
+                  <div className={`w-12 h-12 md:w-14 md:h-14 ${s.bg} rounded-xl flex items-center justify-center mx-auto mb-3`}>
+                    <s.icon size={20} className={s.color} strokeWidth={1.75} />
                   </div>
-                ))}
-              </div>
+                  <p className="text-2xl md:text-3xl font-bold text-gray-900">{s.value}</p>
+                  <p className="text-sm text-gray-400 mt-1">{s.label}</p>
+                </div>
+              ))}
             </div>
-          )}
+
+            {/* Pending alert */}
+            {pending.length > 0 && taken.length > 0 && (
+              <div className="rounded-xl px-5 py-4 bg-warning-50 border border-warning-100 flex items-center gap-3">
+                <Bell size={18} className="text-warning-500 shrink-0" strokeWidth={2} />
+                <p className="text-base text-warning-700 font-medium">
+                  {pending.length} medication{pending.length > 1 ? 's' : ''} still to take today
+                </p>
+              </div>
+            )}
+
+            {loading ? (
+              <div className="card p-16 flex justify-center">
+                <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : meds.length === 0 ? (
+              <div className="card p-12 md:p-16 text-center">
+                <Pill size={48} className="mx-auto mb-4 text-gray-300" strokeWidth={1.5} />
+                <p className="text-lg font-semibold text-gray-700 mb-2">No medications added yet</p>
+                <p className="text-sm text-gray-400 mb-6">Add your daily medications to track them here</p>
+                <button onClick={() => setShowAdd(true)} className="btn-primary btn mx-auto">
+                  <Plus size={16} strokeWidth={2.5} /> Add your first medication
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {pending.length > 0 && (
+                  <div>
+                    <p className="section-label">Still to take</p>
+                    <div className="card divide-y divide-gray-100 overflow-hidden">
+                      {pending.map((m) => (
+                        <div key={m.id} className="flex items-center gap-4 px-6 py-5">
+                          <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center shrink-0">
+                            <Pill size={20} className="text-brand-500" strokeWidth={1.75} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-base font-semibold text-gray-900">{m.name}</p>
+                            <div className="flex items-center gap-2 mt-1 flex-wrap">
+                              <span className="text-sm text-gray-400">{m.dosage}</span>
+                              <span className="text-gray-300">·</span>
+                              <AlarmClock size={12} className="text-gray-400" strokeWidth={1.75} />
+                              <span className="text-sm text-gray-400">{m.time}</span>
+                              <span className="text-gray-300">·</span>
+                              <span className="text-sm text-gray-400">{m.frequency}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button onClick={() => handleTake(m.id)}
+                              className="btn bg-success-50 text-success-700 hover:bg-success-100 border border-success-100">
+                              <Check size={14} strokeWidth={2.5} /> Taken
+                            </button>
+                            <button onClick={() => handleDelete(m.id)}
+                              className="btn-ghost btn p-2 text-gray-300 hover:text-danger-500">
+                              <Trash2 size={16} strokeWidth={1.75} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {taken.length > 0 && (
+                  <div>
+                    <p className="section-label">Taken today</p>
+                    <div className="card divide-y divide-gray-100 overflow-hidden">
+                      {taken.map((m) => (
+                        <div key={m.id} className="flex items-center gap-4 px-6 py-5 opacity-60">
+                          <div className="w-12 h-12 bg-success-50 rounded-xl flex items-center justify-center shrink-0">
+                            <Check size={20} className="text-success-600" strokeWidth={2.5} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-base font-medium text-gray-500 line-through">{m.name}</p>
+                            <p className="text-sm text-gray-400 mt-1">{m.dosage} · {m.time}</p>
+                          </div>
+                          <span className="badge-safe shrink-0">Done</span>
+                          <button onClick={() => handleDelete(m.id)}
+                            className="btn-ghost btn p-2 text-gray-300 hover:text-danger-500">
+                            <Trash2 size={16} strokeWidth={1.75} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+          </div>
+
+          {/* RIGHT: Info sidebar (1/3) */}
+          <div className="space-y-6">
+            
+            <div className="card p-6 md:p-8">
+              <div className="w-14 h-14 bg-brand-50 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Pill size={24} className="text-brand-500" strokeWidth={1.75} />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">Track Your Medications</h3>
+              <p className="text-sm text-gray-500 text-center leading-relaxed mb-5">
+                Never miss a dose. Add your medications and mark them as taken throughout the day.
+              </p>
+              <button onClick={() => setShowAdd(true)} className="btn-primary btn w-full justify-center">
+                <Plus size={16} /> Add Medication
+              </button>
+            </div>
+
+            <div className="card p-6 bg-blue-50 border-blue-100">
+              <p className="text-sm text-blue-800 leading-relaxed">
+                <span className="font-semibold">Tip:</span> Set reminders on your phone to help you remember to take your medications on time.
+              </p>
+            </div>
+
+          </div>
+
         </div>
-      )}
+      </div>
     </div>
   );
 }

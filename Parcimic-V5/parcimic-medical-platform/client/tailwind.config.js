@@ -2,6 +2,14 @@
 module.exports = {
   content: ['./src/**/*.{js,jsx}'],
   theme: {
+    screens: {
+      'xs': '475px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       colors: {
         brand:   { 50: '#eff6ff', 100: '#dbeafe', 500: '#3B82F6', 600: '#2563eb', 700: '#1d4ed8' },
@@ -31,14 +39,15 @@ module.exports = {
         xl:    ['20px', '28px'],
         '2xl': ['24px', '32px'],
         '3xl': ['28px', '36px'],
+        '4xl': ['32px', '40px'],
       },
       spacing: {
         1: '4px', 2: '8px', 3: '12px', 4: '16px', 5: '20px',
         6: '24px', 7: '28px', 8: '32px', 9: '36px', 10: '40px',
-        12: '48px', 14: '56px', 16: '64px',
+        12: '48px', 14: '56px', 16: '64px', 20: '80px',
       },
       borderRadius: {
-        sm: '6px', DEFAULT: '8px', md: '10px', lg: '12px',
+        sm: '4px', DEFAULT: '8px', md: '10px', lg: '12px',
         xl: '16px', '2xl': '20px', '3xl': '24px', full: '9999px',
       },
       boxShadow: {
@@ -46,17 +55,27 @@ module.exports = {
         sm:  '0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04)',
         md:  '0 4px 8px -2px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.04)',
         lg:  '0 8px 16px -4px rgb(0 0 0 / 0.08), 0 4px 8px -4px rgb(0 0 0 / 0.04)',
+        xl:  '0 16px 32px -8px rgb(0 0 0 / 0.10), 0 8px 16px -8px rgb(0 0 0 / 0.06)',
         none: 'none',
       },
-      maxWidth: { container: '1280px' },
+      maxWidth: { 
+        container: '1200px', 
+        content: '720px',
+        '7xl': '1280px',
+        '8xl': '1440px',
+      },
       animation: {
-        'fade-in':   'fadeIn 0.25s ease-out',
-        'slide-up':  'slideUp 0.3s ease-out',
-        'spin-slow': 'spin 1.5s linear infinite',
+        'fade-in':     'fadeIn 0.2s ease-out',
+        'fade-in-up':  'fadeInUp 0.3s ease-out forwards',
+        'scale-in':    'scaleIn 0.2s ease-out forwards',
+        'slide-up':    'slideUp 0.25s ease-out',
+        'spin-slow':   'spin 1.5s linear infinite',
       },
       keyframes: {
         fadeIn:  { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
-        slideUp: { '0%': { opacity: 0, transform: 'translateY(10px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+        fadeInUp: { '0%': { opacity: 0, transform: 'translateY(12px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+        scaleIn:  { '0%': { opacity: 0, transform: 'scale(0.96)' }, '100%': { opacity: 1, transform: 'scale(1)' } },
+        slideUp:  { '0%': { opacity: 0, transform: 'translateY(8px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
       },
     },
   },

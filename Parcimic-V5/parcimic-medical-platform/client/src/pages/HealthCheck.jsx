@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  User, Heart, Thermometer, Wind, Activity,
-  FlaskConical, CheckCircle, ArrowRight, ArrowLeft
-} from 'lucide-react';
+import { User, Heart, Thermometer, Wind, Activity, FlaskConical, CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { predictSepsis } from '../utils/api';
 
@@ -31,9 +28,9 @@ function calcLocalScore(f) {
 }
 
 const STEPS = [
-  { id: 'basics',   label: 'About You',   icon: User },
-  { id: 'vitals',   label: 'Vitals',      icon: Heart },
-  { id: 'symptoms', label: 'Symptoms',    icon: Activity },
+  { id: 'basics',   label: 'About You',   icon: User         },
+  { id: 'vitals',   label: 'Vitals',      icon: Heart        },
+  { id: 'symptoms', label: 'Symptoms',    icon: Activity     },
   { id: 'labs',     label: 'Lab Results', icon: FlaskConical },
 ];
 
@@ -45,14 +42,17 @@ const defaultForm = {
   wbc: '', lactate: '', creatinine: '', platelets: '',
 };
 
-// ─── Checkbox card ────────────────────────────────────────────────────────────
 function CheckCard({ name, label, sub, checked, onChange }) {
   return (
-    <label className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all duration-150 ${
+    <label className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors ${
       checked ? 'border-brand-400 bg-brand-50' : 'border-gray-200 bg-white hover:border-gray-300'
     }`}>
-      <input type="checkbox" name={name} checked={checked} onChange={onChange}
-        className="w-4 h-4 accent-brand-500 mt-0.5 shrink-0" />
+      <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+        checked ? 'bg-brand-500 border-brand-500' : 'border-gray-300'
+      }`}>
+        {checked && <CheckCircle size={10} className="text-white" strokeWidth={3} />}
+      </div>
+      <input type="checkbox" name={name} checked={checked} onChange={onChange} className="sr-only" />
       <div>
         <p className="text-sm font-medium text-gray-900">{label}</p>
         {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
@@ -61,21 +61,20 @@ function CheckCard({ name, label, sub, checked, onChange }) {
   );
 }
 
-// ─── Steps ────────────────────────────────────────────────────────────────────
 function StepBasics({ form, set }) {
   return (
-    <div className="space-y-5 animate-fade-in">
+    <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-bold text-gray-900 mb-1">Tell us about yourself</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-1">Tell us about yourself</h2>
         <p className="text-sm text-gray-500">This helps us give you a more accurate result.</p>
       </div>
       <div>
         <label className="label">Your age</label>
         <input type="number" name="age" value={form.age} onChange={set}
-          placeholder="e.g. 45" min="1" max="120" className="input max-w-xs" />
+          placeholder="e.g. 45" min="1" max="120" className="input max-w-[160px]" />
       </div>
       <div className="space-y-2">
-        <p className="label">Any of these apply to you?</p>
+        <p className="label">Any of these apply?</p>
         <CheckCard name="recentSurgery" label="Had surgery in the last 30 days" sub="Any type of surgical procedure" checked={form.recentSurgery} onChange={set} />
         <CheckCard name="chronicDisease" label="Have a long-term health condition" sub="e.g. diabetes, heart disease, COPD" checked={form.chronicDisease} onChange={set} />
       </div>
@@ -85,24 +84,24 @@ function StepBasics({ form, set }) {
 
 function StepVitals({ form, set }) {
   const fields = [
-    { name: 'heartRate', label: 'Heart rate',       unit: 'bpm',  placeholder: '72',   hint: 'Normal: 60–100 bpm',    icon: Heart,       min: 30,  max: 250 },
-    { name: 'temp',      label: 'Body temperature', unit: '°C',   placeholder: '37.0', hint: 'Normal: 36.1–37.2 °C',  icon: Thermometer, step: '0.1', min: 30, max: 45 },
-    { name: 'respRate',  label: 'Breathing rate',   unit: '/min', placeholder: '16',   hint: 'Normal: 12–20 per min', icon: Wind,        min: 5,   max: 60 },
-    { name: 'sysBP',     label: 'Blood pressure',   unit: 'mmHg', placeholder: '120',  hint: 'Systolic (top number)', icon: Activity,    min: 50,  max: 250 },
-    { name: 'o2Sat',     label: 'Oxygen level',     unit: '%',    placeholder: '98',   hint: 'Normal: 95–100%',       icon: Activity,    min: 50,  max: 100 },
+    { name: 'heartRate', label: 'Heart rate',       unit: 'bpm',  placeholder: '72',   hint: 'Normal: 60–100',    icon: Heart,       min: 30,  max: 250 },
+    { name: 'temp',      label: 'Body temperature', unit: '°C',   placeholder: '37.0', hint: 'Normal: 36.1–37.2', icon: Thermometer, step: '0.1', min: 30, max: 45 },
+    { name: 'respRate',  label: 'Breathing rate',   unit: '/min', placeholder: '16',   hint: 'Normal: 12–20',     icon: Wind,        min: 5,   max: 60 },
+    { name: 'sysBP',     label: 'Blood pressure',   unit: 'mmHg', placeholder: '120',  hint: 'Systolic',          icon: Activity,    min: 50,  max: 250 },
+    { name: 'o2Sat',     label: 'Oxygen level',     unit: '%',    placeholder: '98',   hint: 'Normal: 95–100%',   icon: Activity,    min: 50,  max: 100 },
   ];
   return (
-    <div className="space-y-5 animate-fade-in">
+    <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-bold text-gray-900 mb-1">Your vital signs</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-1">Your vital signs</h2>
         <p className="text-sm text-gray-500">Enter what you know. Skip anything you don't have.</p>
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
         {fields.map((f) => (
           <div key={f.name} className="card p-4">
-            <div className="flex items-center gap-2 mb-2.5">
-              <f.icon size={15} className="text-brand-500" strokeWidth={1.75} />
-              <label className="text-sm font-semibold text-gray-700">{f.label}</label>
+            <div className="flex items-center gap-2 mb-2">
+              <f.icon size={14} className="text-brand-500" strokeWidth={2} />
+              <label className="text-sm font-semibold text-gray-800">{f.label}</label>
             </div>
             <div className="relative">
               <input type="number" name={f.name} value={form[f.name]} onChange={set}
@@ -128,32 +127,32 @@ function StepSymptoms({ form, set }) {
     { name: 'fatigue',             label: 'Extreme tiredness',           sub: 'Much more tired than usual' },
   ];
   return (
-    <div className="space-y-5 animate-fade-in">
+    <div className="space-y-4 sm:space-y-5">
       <div>
-        <h2 className="text-xl font-bold text-gray-900 mb-1">How are you feeling?</h2>
-        <p className="text-sm text-gray-500">Select everything that applies to you right now.</p>
+        <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-1">How are you feeling?</h2>
+        <p className="text-sm text-gray-500">Select everything that applies right now.</p>
       </div>
       <div className="grid sm:grid-cols-2 gap-2">
         {symptoms.map((s) => (
           <CheckCard key={s.name} name={s.name} label={s.label} sub={s.sub} checked={form[s.name]} onChange={set} />
         ))}
       </div>
-      <p className="text-xs text-gray-400 text-center">Not sure? Leave it unchecked — that's fine.</p>
+      <p className="text-xs text-gray-400 text-center">Not sure? Leave it unchecked.</p>
     </div>
   );
 }
 
 function StepLabs({ form, set }) {
   const fields = [
-    { name: 'wbc',        label: 'White blood cell count', unit: '×10³/µL', placeholder: '8.5',  step: '0.1' },
-    { name: 'lactate',    label: 'Lactate level',          unit: 'mmol/L',  placeholder: '1.2',  step: '0.1' },
-    { name: 'creatinine', label: 'Creatinine',             unit: 'mg/dL',   placeholder: '1.0',  step: '0.1' },
-    { name: 'platelets',  label: 'Platelet count',         unit: '×10³/µL', placeholder: '250' },
+    { name: 'wbc',        label: 'White blood cells', unit: '×10³/µL', placeholder: '8.5',  step: '0.1' },
+    { name: 'lactate',    label: 'Lactate level',     unit: 'mmol/L',  placeholder: '1.2',  step: '0.1' },
+    { name: 'creatinine', label: 'Creatinine',        unit: 'mg/dL',   placeholder: '1.0',  step: '0.1' },
+    { name: 'platelets',  label: 'Platelet count',    unit: '×10³/µL', placeholder: '250'              },
   ];
   return (
-    <div className="space-y-5 animate-fade-in">
+    <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-bold text-gray-900 mb-1">Lab results</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-1">Lab results</h2>
         <p className="text-sm text-gray-500">Only fill this in if you have recent blood test results. Completely optional.</p>
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
@@ -170,7 +169,7 @@ function StepLabs({ form, set }) {
       </div>
       <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
         <p className="text-xs text-gray-500 leading-relaxed">
-          Don't have lab results? No problem — skip this step and we'll still give you a useful result based on your vitals and symptoms.
+          Don't have lab results? Skip this step — we'll still give you a useful result based on your vitals and symptoms.
         </p>
       </div>
     </div>
@@ -198,8 +197,17 @@ export default function HealthCheck() {
     };
     try {
       let data;
-      try { data = await predictSepsis(payload); }
+      try { 
+        data = await predictSepsis(payload);
+        // Ensure score is defined
+        if (data && typeof data.score === 'number') {
+          data.isLocal = false;
+        } else {
+          throw new Error('Invalid API response');
+        }
+      }
       catch {
+        // Fallback to local scoring
         const score = calcLocalScore(form);
         data = { score, riskLevel: score >= 65 ? 'high' : score >= 35 ? 'medium' : 'low', recommendation: null, isLocal: true };
       }
@@ -218,55 +226,62 @@ export default function HealthCheck() {
   const isLast = step === STEPS.length - 1;
 
   return (
-    <div className="max-w-xl mx-auto space-y-6 animate-fade-in">
+    <div className="w-full">
+      <div className="max-w-3xl mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
 
-      {/* Progress */}
-      <div>
-        <div className="flex items-center mb-3">
-          {STEPS.map((s, i) => (
-            <React.Fragment key={s.id}>
-              <div className="flex flex-col items-center gap-1.5">
-                <div className={`step-dot ${i < step ? 'step-dot-done' : i === step ? 'step-dot-active' : 'step-dot-inactive'}`}>
-                  {i < step ? <CheckCircle size={15} strokeWidth={2.5} /> : <span>{i + 1}</span>}
+        {/* Progress */}
+        <div className="card p-5 md:p-6 mb-6">
+          <div className="flex items-center mb-4">
+            {STEPS.map((s, i) => (
+              <React.Fragment key={s.id}>
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className={`step-dot ${i < step ? 'step-dot-done' : i === step ? 'step-dot-active' : 'step-dot-inactive'}`}>
+                    {i < step ? <CheckCircle size={14} strokeWidth={2.5} /> : <span className="text-xs">{i + 1}</span>}
+                  </div>
+                  <span className={`text-[10px] md:text-xs font-semibold hidden sm:block ${i === step ? 'text-brand-600' : 'text-gray-400'}`}>
+                    {s.label}
+                  </span>
                 </div>
-                <span className={`text-xs font-medium hidden sm:block ${i === step ? 'text-brand-600' : 'text-gray-400'}`}>
-                  {s.label}
-                </span>
-              </div>
-              {i < STEPS.length - 1 && (
-                <div className={`flex-1 h-0.5 mx-2 rounded-full transition-colors duration-300 ${i < step ? 'bg-success-500' : 'bg-gray-200'}`} />
-              )}
-            </React.Fragment>
-          ))}
+                {i < STEPS.length - 1 && (
+                  <div className={`flex-1 h-px mx-2 ${i < step ? 'bg-success-500' : 'bg-gray-200'}`} />
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+          {/* Progress bar */}
+          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-full bg-brand-500 rounded-full transition-all duration-300"
+              style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
+          </div>
+          <p className="text-xs md:text-sm text-gray-400 mt-3 text-right">Step {step + 1} of {STEPS.length}</p>
         </div>
-        <p className="text-xs text-gray-400 text-center">Step {step + 1} of {STEPS.length}</p>
+
+        {/* Content */}
+        <div className="card p-6 md:p-8 lg:p-10 mb-6">{steps[step]}</div>
+
+        {/* Navigation */}
+        <div className="flex gap-3 md:gap-4">
+          {step > 0 && (
+            <button onClick={() => setStep((s) => s - 1)} className="btn btn-secondary flex-1 md:flex-initial md:px-8">
+              <ArrowLeft size={16} strokeWidth={2} /> Back
+            </button>
+          )}
+          {isLast ? (
+            <button onClick={handleSubmit} disabled={loading} className="btn-primary btn flex-1 md:px-8">
+              {loading
+                ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Checking...</>
+                : <>Get My Result <ArrowRight size={16} strokeWidth={2} /></>
+              }
+            </button>
+          ) : (
+            <button onClick={() => setStep((s) => s + 1)} className="btn-primary btn flex-1 md:px-8">
+              Continue <ArrowRight size={16} strokeWidth={2} />
+            </button>
+          )}
+        </div>
+
+        <p className="text-xs md:text-sm text-gray-400 text-center px-4 mt-6">Your data is not stored unless you sign in.</p>
       </div>
-
-      {/* Content */}
-      <div className="card p-6 sm:p-8">{steps[step]}</div>
-
-      {/* Navigation */}
-      <div className="flex gap-3">
-        {step > 0 && (
-          <button onClick={() => setStep((s) => s - 1)} className="btn btn-secondary flex-1">
-            <ArrowLeft size={15} strokeWidth={2} /> Back
-          </button>
-        )}
-        {isLast ? (
-          <button onClick={handleSubmit} disabled={loading} className="btn-primary btn flex-1">
-            {loading
-              ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Checking...</>
-              : <>Get My Result <ArrowRight size={15} strokeWidth={2.5} /></>
-            }
-          </button>
-        ) : (
-          <button onClick={() => setStep((s) => s + 1)} className="btn-primary btn flex-1">
-            Continue <ArrowRight size={15} strokeWidth={2.5} />
-          </button>
-        )}
-      </div>
-
-      <p className="text-xs text-gray-400 text-center">Your data is not stored unless you sign in.</p>
     </div>
   );
 }

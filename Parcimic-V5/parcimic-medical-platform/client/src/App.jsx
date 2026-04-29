@@ -9,6 +9,7 @@ import Result      from './pages/Result';
 import Assistant   from './pages/Assistant';
 import EmergencyMap from './pages/EmergencyMap';
 import History     from './pages/History';
+import Timeline    from './pages/Timeline';
 import Profile     from './pages/Profile';
 import Medications from './pages/Medications';
 
@@ -36,6 +37,7 @@ export default function App() {
             <Route path="assistant" element={<Assistant />} />
             <Route path="emergency" element={<EmergencyMap />} />
             <Route path="history"   element={<History />} />
+            <Route path="timeline"  element={<Timeline />} />
             <Route path="medications" element={<Medications />} />
             <Route path="profile"   element={<Profile />} />
             <Route path="*"         element={<Navigate to="/" replace />} />

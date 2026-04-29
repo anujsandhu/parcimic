@@ -6,11 +6,11 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "nodemon server.js",
     "dev:client": "cd client && npm start",
     "install:all": "npm install && cd client && npm install",
-    "build": "cd client && npm run build",
-    "postinstall": "cd client && npm install"
+    "build": "cd client && npm run build"
   },
   "dependencies": {
     "axios": "^1.6.7",
@@ -20,9 +20,16 @@
     "helmet": "^7.1.0"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "nodemon": "^3.1.0"
   },
-  "keywords": ["sepsis", "medical", "ai", "gemini", "firebase"],
+  "keywords": [
+    "sepsis",
+    "medical",
+    "ai",
+    "gemini",
+    "firebase"
+  ],
   "author": "Parcimic / Grooveat",
   "license": "ISC"
 }

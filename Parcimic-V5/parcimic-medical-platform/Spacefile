@@ -1,0 +1,11 @@
+# Deta Space configuration
+v: 0
+micros:
+  - name: parcimic-api
+    src: .
+    engine: nodejs18
+    primary: true
+    run: node server.js
+    public_routes:
+      - "/api/*"
+      - "/health"
