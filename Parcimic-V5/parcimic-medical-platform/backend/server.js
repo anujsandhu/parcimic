@@ -12,7 +12,7 @@ app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
     ? ['https://parcimic.web.app', 'https://parcimic.firebaseapp.com']
-    : '*'
+    : ['http://localhost:3000', 'http://localhost:5173', '*']
 }));
 app.use(express.json({ limit: '1mb' }));
 

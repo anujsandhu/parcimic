@@ -1,7 +1,7 @@
-public/data/
 # Dependencies
 node_modules/
 client/node_modules/
+backend/node_modules/
 
 # Build output
 client/build/
@@ -13,6 +13,7 @@ dist/
 .env.*.local
 backend/.env
 backend/.env.local
+client/.env.local
 
 # Logs
 *.log
@@ -38,6 +39,10 @@ ml_service/__pycache__/
 ml_service/model.pkl
 ml_service/venv/
 ml_service/.venv/
+
+# Firebase
+.firebase/
+firebase-debug.log
 
 # Misc
 scratch/
