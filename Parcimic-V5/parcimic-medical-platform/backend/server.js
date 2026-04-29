@@ -249,6 +249,29 @@ Never mention "Gemini", "Groq", "OpenRouter", "LLaMA", or any AI brand. You are 
   }
 });
 
+// Explain health results
+app.post('/api/llm/explain', async (req, res) => {
+  try {
+    const { score, riskLevel, vitals, recommendation } = req.body;
+    
+    const msgs = simpleMessages(
+      'You are a friendly health assistant for the Parcimic app. Explain health results to regular people using simple, calm language. No medical jargon. No AI brand names. Structure your response in short paragraphs.',
+      `Explain this health check result to the user:
+Risk score: ${score}/100 — ${riskLevel} risk
+Heart rate: ${vitals?.heartRate || '?'} bpm, Temperature: ${vitals?.temp || '?'}°C, Oxygen: ${vitals?.o2Sat || '?'}%, Blood pressure: ${vitals?.sysBP || '?'} mmHg
+${recommendation ? 'Initial assessment: ' + recommendation : ''}
+
+Write 3-4 short paragraphs covering: (1) what is happening in simple terms, (2) why these readings matter, (3) what they should do right now, (4) when to seek help.`
+    );
+    
+    const explanation = await callAI(msgs, 500);
+    res.json({ explanation: explanation || 'Unable to generate a recommendation at this time. Please try again.' });
+  } catch (err) {
+    console.error('[llm/explain]', err.message);
+    res.status(500).json({ error: 'Explanation failed' });
+  }
+});
+
 // Nearby healthcare
 app.get('/api/nearby-healthcare', async (req, res) => {
   try {
