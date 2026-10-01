@@ -50,7 +50,7 @@ export default function Profile() {
   // ── Sign-in page ──────────────────────────────────────────────────────────
   if (!user) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center px-4 animate-fade-in">
+      <div className="min-h-[70vh] flex items-center justify-center px-4 py-8 animate-fade-in">
         <div className="w-full max-w-sm">
           {/* Logo */}
           <div className="text-center mb-8">
@@ -68,38 +68,14 @@ export default function Profile() {
           <div className="card p-6 shadow-md">
             <button
               onClick={signInWithGoogle}
-              className="btn btn-secondary w-full justify-center py-3 gap-3 hover:bg-gray-50 mb-4">
+              className="btn btn-secondary w-full justify-center py-3 gap-3 hover:bg-gray-50">
               <GoogleIcon />
               <span className="font-semibold">Continue with Google</span>
             </button>
 
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-white px-3 text-xs text-gray-400">or</span>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <label className="label">Email</label>
-                <input type="email" placeholder="you@example.com" className="input" />
-              </div>
-              <div>
-                <label className="label">Password</label>
-                <input type="password" placeholder="••••••••" className="input" />
-              </div>
-              <button className="btn-primary btn w-full justify-center py-2.5 mt-1">
-                Sign In
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between mt-4">
-              <button className="text-xs text-brand-600 hover:text-brand-700 font-medium">Forgot password?</button>
-              <button className="text-xs text-brand-600 hover:text-brand-700 font-medium">Create account</button>
-            </div>
+            <p className="text-xs text-gray-400 text-center mt-4">
+              Sign in with your Google account to save your health data
+            </p>
           </div>
 
           {/* Benefits */}
@@ -128,7 +104,7 @@ export default function Profile() {
   const initial = user.displayName?.[0]?.toUpperCase() ?? user.email?.[0]?.toUpperCase() ?? 'U';
 
   return (
-    <div className="w-full">
+    <div className="w-full pb-24 lg:pb-8">
       <div className="max-w-4xl mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
         
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Profile</h1>
@@ -160,14 +136,14 @@ export default function Profile() {
                 <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : stats && (
-              <div className="grid grid-cols-3 gap-4 md:gap-6">
+              <div className="grid grid-cols-1 xs:grid-cols-3 gap-3 md:gap-6">
                 {[
                   { label: 'Checks',    value: stats.total,      icon: Activity,    color: 'text-brand-500',  bg: 'bg-brand-50'  },
                   { label: 'High risk', value: stats.high,       icon: AlertCircle, color: 'text-danger-500', bg: 'bg-danger-50' },
                   { label: 'Avg score', value: stats.avg || '—', icon: TrendingUp,  color: 'text-amber-500',  bg: 'bg-amber-50'  },
                 ].map((s) => (
-                  <div key={s.label} className="card p-5 md:p-6 text-center">
-                    <div className={`w-12 h-12 md:w-14 md:h-14 ${s.bg} rounded-xl flex items-center justify-center mx-auto mb-3`}>
+                  <div key={s.label} className="card p-4 md:p-6 text-center">
+                    <div className={`w-10 h-10 md:w-12 md:h-12 ${s.bg} rounded-lg flex items-center justify-center mx-auto mb-3`}>
                       <s.icon size={20} className={s.color} strokeWidth={1.75} />
                     </div>
                     <p className="text-2xl md:text-3xl font-bold text-gray-900">{s.value}</p>
@@ -184,7 +160,7 @@ export default function Profile() {
                 { label: 'View my history',      icon: Clock,    to: '/history', sub: 'Past health checks'  },
               ].map((item) => (
                 <button key={item.to} onClick={() => navigate(item.to)}
-                  className="w-full flex items-center gap-4 px-6 py-5 hover:bg-gray-50 transition-colors text-left">
+                  className="w-full flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-5 hover:bg-gray-50 transition-colors text-left">
                   <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
                     <item.icon size={18} className="text-gray-500" strokeWidth={1.75} />
                   </div>

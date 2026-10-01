@@ -60,7 +60,7 @@ export default function History() {
 
   if (!user) {
     return (
-      <div className="max-w-sm mx-auto text-center py-16 space-y-4 animate-fade-in">
+      <div className="max-w-sm mx-auto px-4 text-center py-16 space-y-4 animate-fade-in">
         <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto">
           <Clock size={22} className="text-gray-400" strokeWidth={1.75} />
         </div>
@@ -75,8 +75,9 @@ export default function History() {
   }
 
   return (
-    <div className="max-w-content mx-auto space-y-4 animate-fade-in">
-      <div className="flex items-center justify-between">
+    <div className="w-full pb-24 lg:pb-8">
+      <div className="max-w-content mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8 space-y-4 animate-fade-in">
+      <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Your History</h1>
           <p className="text-sm text-gray-500 mt-0.5">Track how your health changes over time</p>
@@ -87,13 +88,13 @@ export default function History() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 xs:grid-cols-3 gap-3">
         {[
           { label: 'Total checks',  value: records.length, icon: Clock,       color: 'text-brand-500',  bg: 'bg-brand-50'  },
           { label: 'High risk',     value: records.filter((r) => r.riskLevel === 'high').length, icon: AlertCircle, color: 'text-danger-500', bg: 'bg-danger-50' },
           { label: 'Average score', value: records.length ? Math.round(records.reduce((a, r) => a + r.score, 0) / records.length) : '—', icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-50' },
         ].map((s) => (
-          <div key={s.label} className="card p-4 text-center">
+          <div key={s.label} className="card p-4 text-center min-w-0">
             <div className={`w-8 h-8 ${s.bg} rounded-lg flex items-center justify-center mx-auto mb-2`}>
               <s.icon size={14} className={s.color} strokeWidth={1.75} />
             </div>
@@ -145,7 +146,7 @@ export default function History() {
         ) : (
           <div className="divide-y divide-gray-100">
             {records.map((r) => (
-              <div key={r.id} className="flex items-center gap-3 px-5 py-4 hover:bg-gray-50 transition-colors">
+              <div key={r.id} className="flex items-center gap-3 px-4 sm:px-5 py-4 hover:bg-gray-50 transition-colors">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-gray-100">
                   <RiskIcon level={r.riskLevel} />
                 </div>
@@ -173,6 +174,7 @@ export default function History() {
             ))}
           </div>
         )}
+      </div>
       </div>
     </div>
   );

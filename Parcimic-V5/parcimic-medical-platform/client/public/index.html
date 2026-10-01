@@ -7,8 +7,36 @@
     <meta name="description" content="Parcimic — Your personal health assistant. Check your health early, understand your risk, know what to do." />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Parcimic" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- Icons -->
+    <link rel="icon" href="%PUBLIC_URL%/assets/logos/parcimic-logo.png" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/assets/logos/parcimic-logo.png" />
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
     <title>Parcimic | Personal Health Assistant</title>
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    
+    <script>
+      // Register service worker for PWA
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then((registration) => {
+              console.log('SW registered:', registration);
+            })
+            .catch((error) => {
+              console.log('SW registration failed:', error);
+            });
+        });
+      }
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

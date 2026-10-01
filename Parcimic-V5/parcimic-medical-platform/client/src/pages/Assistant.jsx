@@ -16,23 +16,27 @@ function Bubble({ msg }) {
   const isBlocked = msg.blocked;
   
   return (
-    <div className={`flex gap-3 md:gap-4 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+    <div className={`flex gap-3 md:gap-4 ${isUser ? 'flex-row-reverse' : 'flex-row'} animate-fade-in`}>
       {!isUser && (
-        <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center shrink-0 mt-1 ${
-          isBlocked ? 'bg-warning-500' : 'bg-brand-500'
+        <div className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center shrink-0 mt-1 shadow-md ${
+          isBlocked ? 'bg-warning-500' : 'bg-gradient-to-br from-brand-500 to-brand-600'
         }`}>
           {isBlocked ? (
-            <AlertCircle size={14} className="md:w-4 md:h-4 text-white" strokeWidth={2} />
+            <AlertCircle size={16} className="text-white" strokeWidth={2} />
           ) : (
-            <MessageCircle size={14} className="md:w-4 md:h-4 text-white" strokeWidth={2} />
+            <MessageCircle size={16} className="text-white" strokeWidth={2} />
           )}
         </div>
       )}
-      <div className={`max-w-[80%] md:max-w-[75%] lg:max-w-[70%] ${
-        isUser ? 'bubble-user' : isBlocked ? 'bg-warning-50 border border-warning-200 text-gray-800 rounded-2xl rounded-tl-sm px-4 md:px-5 py-3 md:py-4 text-sm md:text-base' : 'bubble-ai'
+      <div className={`max-w-[88%] md:max-w-[75%] lg:max-w-[70%] min-w-0 ${
+        isUser 
+          ? 'bg-brand-600 text-white rounded-2xl rounded-tr-md px-4 md:px-5 py-3 md:py-4 text-sm md:text-base shadow-sm'
+          : isBlocked 
+            ? 'bg-warning-50 border border-warning-200 text-gray-800 rounded-2xl rounded-tl-md px-4 md:px-5 py-3 md:py-4 text-sm md:text-base shadow-sm' 
+            : 'bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-tl-md px-4 md:px-5 py-3 md:py-4 text-sm md:text-base shadow-sm'
       }`}>
         <p className="leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
-        <p className={`text-[10px] md:text-xs mt-2 ${isUser ? 'text-blue-200' : 'text-gray-400'}`}>
+        <p className={`text-[10px] md:text-xs mt-2 ${isUser ? 'text-white/70' : 'text-gray-400'}`}>
           {new Date(msg.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>
@@ -68,7 +72,6 @@ export default function Assistant() {
     
     const loadUserData = async () => {
       try {
-        // Get latest health check
         const predQuery = query(
           collection(db, 'predictions'),
           where('uid', '==', user.uid),
@@ -78,7 +81,6 @@ export default function Assistant() {
         const predSnap = await getDocs(predQuery);
         const lastResult = predSnap.empty ? null : predSnap.docs[0].data();
 
-        // Get medications
         const medQuery = query(
           collection(db, 'medications'),
           where('uid', '==', user.uid),
@@ -88,7 +90,6 @@ export default function Assistant() {
         const medSnap = await getDocs(medQuery);
         const medications = medSnap.docs.map(d => d.data());
 
-        // Get recent symptoms
         const symQuery = query(
           collection(db, 'symptoms'),
           where('uid', '==', user.uid),
@@ -115,13 +116,11 @@ export default function Assistant() {
     const content = (text || input).trim();
     if (!content || loading) return;
 
-    // Add user message
     setMessages((p) => [...p, { role: 'user', content, ts: Date.now() }]);
     setInput('');
     setLoading(true);
 
     try {
-      // NO RESTRICTIONS - Direct LLM call
       const systemPrompt = getSystemPrompt();
       const userPrompt = buildPromptWithContext(content, userData);
       
@@ -137,12 +136,6 @@ export default function Assistant() {
 
       let response = data.reply || "I'm not sure about that. Could you rephrase?";
 
-      // Enforce length constraint (max ~600 chars)
-      if (response.length > 600) {
-        response = response.substring(0, 600) + '...';
-      }
-
-      // Enforce length constraint (max ~600 chars)
       if (response.length > 600) {
         response = response.substring(0, 600) + '...';
       }
@@ -168,40 +161,40 @@ export default function Assistant() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col bg-gray-50">
+    <div className="h-full flex flex-col bg-gray-50">
       
       {/* Desktop: Centered chat container */}
-      <div className="flex-1 flex items-stretch lg:items-center justify-center overflow-hidden">
-        <div className="w-full lg:max-w-4xl xl:max-w-5xl h-full lg:h-[85vh] flex flex-col lg:rounded-2xl lg:shadow-xl lg:border lg:border-gray-200 bg-white">
+      <div className="flex-1 min-h-0 flex items-stretch lg:items-center justify-center overflow-hidden p-0 lg:p-6">
+        <div className="w-full lg:max-w-4xl xl:max-w-5xl h-full flex flex-col lg:rounded-xl lg:shadow-lg lg:border lg:border-gray-200 bg-white overflow-hidden">
 
           {/* Title bar */}
-          <div className="flex items-center justify-between px-4 md:px-6 py-4 bg-white border-b border-gray-200 shrink-0 lg:rounded-t-2xl">
+          <div className="flex items-center justify-between gap-3 px-4 md:px-6 py-4 bg-brand-600 lg:bg-white lg:border-b lg:border-gray-200 shrink-0 lg:rounded-t-xl">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-brand-500 rounded-full flex items-center justify-center">
-                <MessageCircle size={18} className="text-white" strokeWidth={2} />
+              <div className="w-10 h-10 bg-white lg:bg-brand-500 rounded-full flex items-center justify-center shadow-lg lg:shadow-none">
+                <MessageCircle size={18} className="text-brand-500 lg:text-white" strokeWidth={2} />
               </div>
               <div>
-                <p className="text-base font-semibold text-gray-900">Parcimic AI</p>
+                <p className="text-base font-semibold text-white lg:text-gray-900">Parcimic AI</p>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 bg-success-500 rounded-full" />
-                  <p className="text-xs text-gray-400">Health Assistant</p>
+                  <div className="w-2 h-2 bg-green-400 lg:bg-success-500 rounded-full animate-pulse" />
+                  <p className="text-xs text-white/90 lg:text-gray-400">Online</p>
                 </div>
               </div>
             </div>
             <button
               onClick={() => setMessages([{ role: 'assistant', content: "Chat cleared. What would you like to know?", ts: Date.now() }])}
-              className="btn btn-secondary btn-sm">
+              className="btn btn-sm bg-white/20 lg:bg-gray-100 text-white lg:text-gray-700 border-0 lg:border lg:border-gray-200 hover:bg-white/30 lg:hover:bg-gray-200 px-3">
               <RefreshCw size={14} strokeWidth={2} /> Clear
             </button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 md:px-6 lg:px-8 py-6 space-y-4 md:space-y-5">
+          <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 lg:px-8 py-5 md:py-6 space-y-5 md:space-y-6 bg-gray-50/50">
             {messages.length === 1 && (
               <div className="flex flex-wrap gap-2 pb-3">
                 {SUGGESTIONS.map((q) => (
                   <button key={q} onClick={() => send(q)} disabled={loading}
-                    className="text-xs md:text-sm text-brand-600 bg-white border border-gray-200 hover:border-brand-300 hover:bg-brand-50 px-3 md:px-4 py-2 rounded-full transition-colors font-medium touch-manipulation">
+                    className="text-xs md:text-sm text-brand-600 bg-white border border-brand-200 hover:border-brand-400 hover:bg-brand-50 hover:shadow-sm px-3.5 py-2.5 rounded-full transition-all font-medium touch-manipulation active:scale-95">
                     {q}
                   </button>
                 ))}
@@ -212,12 +205,12 @@ export default function Assistant() {
 
             {loading && (
               <div className="flex gap-3">
-                <div className="w-8 h-8 md:w-10 md:h-10 bg-brand-500 rounded-full flex items-center justify-center shrink-0 mt-1">
+                <div className="w-10 h-10 bg-brand-500 rounded-full flex items-center justify-center shrink-0 mt-1 shadow-md">
                   <MessageCircle size={16} className="text-white" strokeWidth={2} />
                 </div>
                 <div className="bubble-ai flex items-center gap-2 py-4">
                   {[0, 150, 300].map((d) => (
-                    <div key={d} className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />
+                    <div key={d} className="w-2 h-2 bg-brand-400 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />
                   ))}
                 </div>
               </div>
@@ -226,7 +219,7 @@ export default function Assistant() {
           </div>
 
           {/* Input */}
-          <div className="px-4 md:px-6 lg:px-8 py-4 bg-white border-t border-gray-200 shrink-0 pb-safe lg:rounded-b-2xl">
+          <div className="px-4 md:px-6 lg:px-8 py-4 bg-white border-t border-gray-200 shrink-0 shadow-[0_-4px_12px_rgba(0,0,0,0.04)] lg:rounded-b-xl">
             <div className="flex gap-3">
               <input
                 ref={inputRef}
@@ -235,16 +228,16 @@ export default function Assistant() {
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
                 placeholder="Ask about your health..."
                 disabled={loading}
-                className="input flex-1 text-sm md:text-base"
+                className="input flex-1 text-sm md:text-base shadow-sm"
               />
               <button
                 onClick={() => send()}
                 disabled={loading || !input.trim()}
-                className="btn-primary btn px-4 md:px-5 shrink-0 disabled:opacity-40">
+                className="btn-primary btn px-5 shrink-0 disabled:opacity-40 shadow-md hover:shadow-lg transition-shadow">
                 <Send size={16} strokeWidth={2} />
               </button>
             </div>
-            <p className="text-xs text-gray-400 mt-2 text-center">
+            <p className="text-xs text-gray-400 mt-3 text-center">
               Health guidance only • Not a substitute for professional medical advice
             </p>
           </div>

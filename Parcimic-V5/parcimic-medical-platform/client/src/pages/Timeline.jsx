@@ -18,7 +18,7 @@ export default function Timeline() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full pb-24 lg:pb-8">
       <div className="max-w-4xl mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
@@ -37,7 +37,7 @@ export default function Timeline() {
           </div>
         </div>
 
-        <div className="card p-6 md:p-8 lg:p-10 mb-6">
+        <div className="card p-4 sm:p-6 md:p-8 lg:p-10 mb-6 overflow-hidden">
           <HealthTimeline />
         </div>
 

@@ -108,8 +108,8 @@ export default function Home() {
   const risk = RISK[lastResult?.riskLevel] || null;
 
   return (
-    <div className="w-full">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
+    <div className="w-full pb-24 lg:pb-8">
+      <div className="container-responsive py-4 md:py-6 lg:py-8">
         
         <OfflineIndicator />
         <AlertsBanner alerts={alerts} />
@@ -122,19 +122,19 @@ export default function Home() {
           <div className="lg:col-span-2 space-y-4 md:space-y-6">
             
             {/* Hero */}
-            <div className="card p-6 md:p-8 lg:p-10">
-              <p className="text-xs font-semibold text-brand-600 uppercase tracking-widest mb-3">Health Risk Monitor</p>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-3">
+            <div className="card p-5 md:p-7 lg:p-8">
+              <p className="text-xs font-bold text-brand-600 uppercase tracking-wider mb-2">Health Risk Monitor</p>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-2 md:mb-3">
                 Check Your Health Risk Early
               </h1>
-              <p className="text-gray-500 text-base md:text-lg leading-relaxed mb-6 max-w-2xl">
+              <p className="text-gray-500 text-sm md:text-base lg:text-lg leading-relaxed mb-5 md:mb-6 max-w-2xl">
                 Understand your condition and know what to do next. Track symptoms, get AI guidance, and stay informed.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={() => navigate('/check')} className="btn-primary btn btn-lg w-full sm:w-auto">
+              <div className="flex flex-col xs:flex-row gap-3">
+                <button onClick={() => navigate('/check')} className="btn-primary btn w-full sm:w-auto justify-center">
                   Start Check <ArrowRight size={18} strokeWidth={2} />
                 </button>
-                <button onClick={() => navigate('/assistant')} className="btn-secondary btn btn-lg w-full sm:w-auto">
+                <button onClick={() => navigate('/assistant')} className="btn-secondary btn w-full sm:w-auto justify-center">
                   <MessageCircle size={18} strokeWidth={1.75} /> Ask AI
                 </button>
               </div>
@@ -148,7 +148,7 @@ export default function Home() {
             {/* Quick Actions */}
             <div>
               <p className="section-label">Quick Actions</p>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 {[
                   { label: 'Start Check',  desc: 'Check your risk',      icon: Activity,      to: '/check',       color: 'text-brand-500',   bg: 'bg-brand-50'   },
                   { label: 'Add Medicine', desc: 'Track medications',     icon: Pill,          to: '/medications', color: 'text-violet-500',  bg: 'bg-violet-50'  },
@@ -156,13 +156,13 @@ export default function Home() {
                   { label: 'Ask AI',       desc: 'Get guidance',          icon: MessageCircle, to: '/assistant',   color: 'text-success-600', bg: 'bg-success-50' },
                 ].map((a) => (
                   <button key={a.to} onClick={() => navigate(a.to)}
-                    className="card-hover p-4 md:p-5 lg:p-6 flex flex-col items-start gap-3 text-left h-full">
-                    <div className={`w-10 h-10 md:w-12 md:h-12 ${a.bg} rounded-xl flex items-center justify-center`}>
+                    className="card-hover p-4 md:p-5 flex flex-col items-start gap-2.5 md:gap-3 text-left h-full min-w-0">
+                    <div className={`w-10 h-10 md:w-11 md:h-11 ${a.bg} rounded-lg flex items-center justify-center shrink-0`}>
                       <a.icon size={20} className={a.color} strokeWidth={1.75} />
                     </div>
-                    <div>
-                      <p className="text-sm md:text-base font-semibold text-gray-900">{a.label}</p>
-                      <p className="text-xs md:text-sm text-gray-400 mt-1">{a.desc}</p>
+                    <div className="min-w-0">
+                      <p className="text-sm md:text-base font-semibold text-gray-900 leading-tight">{a.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{a.desc}</p>
                     </div>
                   </button>
                 ))}
@@ -194,12 +194,12 @@ export default function Home() {
                     <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : todayMeds.length === 0 ? (
-                  <div className="px-6 py-8 flex items-center justify-between gap-4">
+                  <div className="px-5 py-8 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-4">
                     <div>
                       <p className="text-base font-medium text-gray-700">No medications added yet</p>
                       <p className="text-sm text-gray-400 mt-1">Add your daily medicines to track them</p>
                     </div>
-                    <button onClick={() => navigate('/medications')} className="btn btn-secondary shrink-0">
+                    <button onClick={() => navigate('/medications')} className="btn btn-secondary shrink-0 w-full xs:w-auto">
                       <Plus size={14} /> Add
                     </button>
                   </div>
@@ -215,7 +215,7 @@ export default function Home() {
                     )}
                     <div className="divide-y divide-gray-100">
                       {todayMeds.slice(0, 4).map((m) => (
-                        <div key={m.id} className="flex items-center gap-4 px-5 py-4">
+                        <div key={m.id} className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4">
                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${m.status === 'taken' ? 'bg-success-50' : 'bg-gray-100'}`}>
                             {m.status === 'taken'
                               ? <CheckCircle size={18} className="text-success-600" strokeWidth={2} />
@@ -226,7 +226,7 @@ export default function Home() {
                             <p className={`text-base font-medium ${m.status === 'taken' ? 'line-through text-gray-400' : 'text-gray-800'}`}>{m.name}</p>
                             <p className="text-sm text-gray-400">{m.dosage} · {m.time}</p>
                           </div>
-                          <span className={m.status === 'taken' ? 'badge-safe' : 'badge-medium'}>
+                          <span className={`${m.status === 'taken' ? 'badge-safe' : 'badge-medium'} shrink-0`}>
                             {m.status === 'taken' ? 'Taken' : 'Pending'}
                           </span>
                         </div>

@@ -7,3 +7,14 @@
 # folders you don’t want
 version 2/
 parcimic/
+
+# Environment files
+.env
+.env.local
+.env.production
+.env*.local
+*.env
+*.env.production
+*.env.local
+!.env.example
+!*.env.example

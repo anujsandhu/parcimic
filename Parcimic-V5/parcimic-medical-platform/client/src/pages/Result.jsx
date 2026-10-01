@@ -109,17 +109,18 @@ export default function Result() {
   const Icon = cfg.Icon;
 
   return (
-    <div className="max-w-lg mx-auto space-y-4 animate-fade-in">
+    <div className="w-full pb-24 lg:pb-8">
+      <div className="max-w-2xl mx-auto px-4 md:px-6 py-4 md:py-6 space-y-4 md:space-y-6 animate-fade-in">
 
       {/* Risk card */}
       <div className={`card p-6 ${cfg.bg}`}>
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between gap-3 mb-5">
           <span className={cfg.badge}>{cfg.badgeText}</span>
           {result.isLocal && <span className="text-xs text-gray-400">Local scoring</span>}
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-6">
           <Gauge score={result.score} color={cfg.gaugeColor} />
-          <div className="text-center sm:text-left">
+          <div className="text-center sm:text-left min-w-0">
             <h2 className={`text-xl font-bold mb-1 ${cfg.color}`}>{cfg.label}</h2>
             <p className="text-sm text-gray-500 mb-3">{cfg.sub}</p>
             <div className="flex items-start gap-2 bg-white/60 rounded-lg p-3">
@@ -193,7 +194,7 @@ export default function Result() {
           <p className="text-sm text-gray-600 mb-4 leading-relaxed">
             If you feel very unwell, have difficulty breathing, or are confused — call emergency services now.
           </p>
-          <div className="flex gap-3">
+          <div className="flex flex-col xs:flex-row gap-3">
             <a href="tel:112" className="btn-danger btn flex-1 justify-center">Call 112</a>
             <button onClick={() => navigate('/emergency')} className="btn btn-secondary flex-1">
               <MapPin size={14} strokeWidth={2} /> Find Hospital
@@ -203,7 +204,7 @@ export default function Result() {
       )}
 
       {/* Actions */}
-      <div className="grid sm:grid-cols-2 gap-3">
+      <div className="grid xs:grid-cols-2 gap-3">
         <button onClick={() => navigate('/assistant')} className="btn btn-secondary justify-center py-3">
           <MessageCircle size={15} strokeWidth={1.75} /> Ask AI a question
         </button>
@@ -213,10 +214,11 @@ export default function Result() {
         </button>
       </div>
 
-      <p className="text-xs text-gray-400 text-center leading-relaxed pb-2">
-        This tool provides guidance only and is not a medical diagnosis.
-        Always consult a qualified healthcare professional.
-      </p>
+        <p className="text-xs text-gray-400 text-center leading-relaxed px-4">
+          This tool provides guidance only and is not a medical diagnosis.
+          Always consult a qualified healthcare professional.
+        </p>
+      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 // Unified timeline showing predictions, symptoms, and medications
 
 import React, { useEffect, useState } from 'react';
+import { Activity, Pill, Stethoscope, ClipboardList } from 'lucide-react';
 import { db, auth } from '../utils/firebase';
 import {
   collection,
@@ -12,6 +13,19 @@ import {
   getDocs,
 } from 'firebase/firestore';
 import toast from 'react-hot-toast';
+
+function EventIcon({ type, riskLevel }) {
+  const cls =
+    type === 'prediction' && riskLevel === 'high'
+      ? 'text-danger-500'
+      : type === 'prediction'
+      ? 'text-brand-500'
+      : type === 'symptom'
+      ? 'text-warning-600'
+      : 'text-success-600';
+  const Icon = type === 'prediction' ? Activity : type === 'symptom' ? Stethoscope : Pill;
+  return <Icon size={18} className={cls} strokeWidth={1.9} />;
+}
 
 export default function HealthTimeline() {
   const [events, setEvents] = useState([]);
@@ -49,7 +63,6 @@ export default function HealthTimeline() {
           riskLevel: data.riskLevel,
           title: `Health Check: ${data.riskLevel.toUpperCase()}`,
           description: `Risk score ${data.score}/100`,
-          icon: data.riskLevel === 'high' ? '🚨' : data.riskLevel === 'moderate' ? '⚠️' : '✅',
         });
       });
 
@@ -75,7 +88,6 @@ export default function HealthTimeline() {
           timestamp: data.createdAt.toDate(),
           title: 'Symptom Check-In',
           description: symptoms.length > 0 ? symptoms.join(', ') : 'No significant symptoms',
-          icon: '🤒',
         });
       });
 
@@ -95,7 +107,6 @@ export default function HealthTimeline() {
           timestamp: data.createdAt.toDate(),
           title: `${data.name} Added`,
           description: `${data.dosage} - ${data.frequency}`,
-          icon: '💊',
           status: data.status,
         });
       });
@@ -124,8 +135,10 @@ export default function HealthTimeline() {
 
   if (events.length === 0) {
     return (
-      <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-        <p className="text-3xl mb-2">📊</p>
+      <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300 px-4">
+        <div className="w-12 h-12 bg-white border border-gray-200 rounded-lg flex items-center justify-center mx-auto mb-3">
+          <ClipboardList size={22} className="text-gray-400" strokeWidth={1.75} />
+        </div>
         <p className="text-gray-600">No health data yet</p>
         <p className="text-sm text-gray-500 mt-1">
           Start by taking a health check or logging symptoms
@@ -138,19 +151,19 @@ export default function HealthTimeline() {
     <div className="space-y-4">
       <div className="relative">
         {/* Vertical line */}
-        <div className="absolute left-6 top-12 bottom-0 w-0.5 bg-gradient-to-b from-indigo-200 to-gray-200"></div>
+        <div className="absolute left-5 sm:left-6 top-12 bottom-0 w-0.5 bg-gray-200"></div>
 
         {/* Timeline events */}
         {events.map((event, idx) => (
-          <div key={event.id} className="relative pl-20">
+          <div key={event.id} className="relative pl-14 sm:pl-20">
             {/* Dot */}
-            <div className="absolute left-0 top-2 w-12 h-12 bg-white border-4 border-indigo-200 rounded-full flex items-center justify-center text-lg">
-              {event.icon}
+            <div className="absolute left-0 top-2 w-10 h-10 sm:w-12 sm:h-12 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center">
+              <EventIcon type={event.type} riskLevel={event.riskLevel} />
             </div>
 
             {/* Card */}
             <div
-              className={`p-4 rounded-lg border shadow-sm ${
+              className={`p-4 rounded-lg border shadow-xs ${
                 event.type === 'prediction'
                   ? 'bg-blue-50 border-blue-200'
                   : event.type === 'symptom'
@@ -158,9 +171,9 @@ export default function HealthTimeline() {
                   : 'bg-purple-50 border-purple-200'
               }`}
             >
-              <div className="flex items-start justify-between mb-2">
-                <h4 className="font-semibold text-gray-900">{event.title}</h4>
-                <span className="text-xs text-gray-600 bg-white px-2 py-1 rounded">
+              <div className="flex flex-col xs:flex-row xs:items-start xs:justify-between gap-2 mb-2">
+                <h4 className="font-semibold text-gray-900 leading-snug">{event.title}</h4>
+                <span className="text-xs text-gray-600 bg-white px-2 py-1 rounded w-fit">
                   {event.timestamp.toLocaleDateString()}
                 </span>
               </div>

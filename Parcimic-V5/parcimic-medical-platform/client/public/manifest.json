@@ -1,0 +1,21 @@
+{
+  "short_name": "Parcimic",
+  "name": "Parcimic Health Assistant",
+  "description": "AI-powered health monitoring and sepsis early warning system",
+  "icons": [
+    {
+      "src": "/assets/logos/parcimic-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#3B82F6",
+  "background_color": "#FFFFFF",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["health", "medical", "lifestyle"],
+  "prefer_related_applications": false
+}

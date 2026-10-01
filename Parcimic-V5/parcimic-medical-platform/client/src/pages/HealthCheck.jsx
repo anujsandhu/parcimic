@@ -44,7 +44,7 @@ const defaultForm = {
 
 function CheckCard({ name, label, sub, checked, onChange }) {
   return (
-    <label className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors ${
+    <label className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors min-w-0 ${
       checked ? 'border-brand-400 bg-brand-50' : 'border-gray-200 bg-white hover:border-gray-300'
     }`}>
       <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
@@ -53,8 +53,8 @@ function CheckCard({ name, label, sub, checked, onChange }) {
         {checked && <CheckCircle size={10} className="text-white" strokeWidth={3} />}
       </div>
       <input type="checkbox" name={name} checked={checked} onChange={onChange} className="sr-only" />
-      <div>
-        <p className="text-sm font-medium text-gray-900">{label}</p>
+      <div className="min-w-0">
+        <p className="text-sm font-medium text-gray-900 leading-snug">{label}</p>
         {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
       </div>
     </label>
@@ -98,7 +98,7 @@ function StepVitals({ form, set }) {
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
         {fields.map((f) => (
-          <div key={f.name} className="card p-4">
+          <div key={f.name} className="card p-4 min-w-0">
             <div className="flex items-center gap-2 mb-2">
               <f.icon size={14} className="text-brand-500" strokeWidth={2} />
               <label className="text-sm font-semibold text-gray-800">{f.label}</label>
@@ -157,7 +157,7 @@ function StepLabs({ form, set }) {
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
         {fields.map((f) => (
-          <div key={f.name}>
+          <div key={f.name} className="min-w-0">
             <label className="label">{f.label}</label>
             <div className="relative">
               <input type="number" name={f.name} value={form[f.name]} onChange={set}
@@ -226,61 +226,61 @@ export default function HealthCheck() {
   const isLast = step === STEPS.length - 1;
 
   return (
-    <div className="w-full">
+    <div className="w-full pb-24 lg:pb-8">
       <div className="max-w-3xl mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
 
         {/* Progress */}
-        <div className="card p-5 md:p-6 mb-6">
-          <div className="flex items-center mb-4">
+        <div className="card p-4 md:p-6 mb-4 md:mb-6">
+          <div className="flex items-start mb-4 overflow-x-auto pb-1">
             {STEPS.map((s, i) => (
               <React.Fragment key={s.id}>
-                <div className="flex flex-col items-center gap-1.5">
+                <div className="flex flex-col items-center gap-1.5 shrink-0">
                   <div className={`step-dot ${i < step ? 'step-dot-done' : i === step ? 'step-dot-active' : 'step-dot-inactive'}`}>
-                    {i < step ? <CheckCircle size={14} strokeWidth={2.5} /> : <span className="text-xs">{i + 1}</span>}
+                    {i < step ? <CheckCircle size={16} strokeWidth={2.5} /> : <span className="text-sm font-bold">{i + 1}</span>}
                   </div>
                   <span className={`text-[10px] md:text-xs font-semibold hidden sm:block ${i === step ? 'text-brand-600' : 'text-gray-400'}`}>
                     {s.label}
                   </span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className={`flex-1 h-px mx-2 ${i < step ? 'bg-success-500' : 'bg-gray-200'}`} />
+                  <div className={`min-w-6 sm:min-w-10 flex-1 h-0.5 mx-1.5 md:mx-2 mt-5 ${i < step ? 'bg-success-500' : 'bg-gray-200'}`} />
                 )}
               </React.Fragment>
             ))}
           </div>
           {/* Progress bar */}
-          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
             <div className="h-full bg-brand-500 rounded-full transition-all duration-300"
               style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
           </div>
-          <p className="text-xs md:text-sm text-gray-400 mt-3 text-right">Step {step + 1} of {STEPS.length}</p>
+          <p className="text-xs md:text-sm text-gray-400 mt-3 text-right font-medium">Step {step + 1} of {STEPS.length}</p>
         </div>
 
         {/* Content */}
-        <div className="card p-6 md:p-8 lg:p-10 mb-6">{steps[step]}</div>
+        <div className="card p-5 md:p-8 lg:p-10 mb-4 md:mb-6">{steps[step]}</div>
 
         {/* Navigation */}
-        <div className="flex gap-3 md:gap-4">
+        <div className="flex flex-col xs:flex-row gap-3">
           {step > 0 && (
-            <button onClick={() => setStep((s) => s - 1)} className="btn btn-secondary flex-1 md:flex-initial md:px-8">
+            <button onClick={() => setStep((s) => s - 1)} className="btn btn-secondary flex-1 sm:flex-initial sm:px-8 justify-center">
               <ArrowLeft size={16} strokeWidth={2} /> Back
             </button>
           )}
           {isLast ? (
-            <button onClick={handleSubmit} disabled={loading} className="btn-primary btn flex-1 md:px-8">
+            <button onClick={handleSubmit} disabled={loading} className="btn-primary btn flex-1 sm:px-8 justify-center">
               {loading
                 ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Checking...</>
                 : <>Get My Result <ArrowRight size={16} strokeWidth={2} /></>
               }
             </button>
           ) : (
-            <button onClick={() => setStep((s) => s + 1)} className="btn-primary btn flex-1 md:px-8">
+            <button onClick={() => setStep((s) => s + 1)} className="btn-primary btn flex-1 sm:px-8 justify-center">
               Continue <ArrowRight size={16} strokeWidth={2} />
             </button>
           )}
         </div>
 
-        <p className="text-xs md:text-sm text-gray-400 text-center px-4 mt-6">Your data is not stored unless you sign in.</p>
+        <p className="text-xs md:text-sm text-gray-400 text-center px-4 mt-4 md:mt-6">Your data is not stored unless you sign in.</p>
       </div>
     </div>
   );
